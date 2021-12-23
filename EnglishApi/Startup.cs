@@ -1,4 +1,7 @@
+using BLL.Interfaces;
+using BLL.Services;
 using DAL;
+using EnglishApi.Infrastructure.Profiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -30,18 +33,34 @@ namespace EnglishApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnglishApi", Version = "v1" });
             });
 
+            //Db connection
             services.AddDbContext<EnglishContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            //Identity setting
             services.AddIdentity<User, IdentityRole>()
                .AddEntityFrameworkStores<EnglishContext>();
+
+            //Services
+            services.AddScoped<ITagService, TagService>();
+            services.AddScoped<IDictionaryService, DictionaryService>();
+            services.AddScoped(typeof(IBaseGenaricService<>), typeof(BaseGenaricService<>));
+            services.AddScoped<ITranslatedWordService, TranslatedWordService>();
+            services.AddScoped<IWordService, WordService>();
+
+            //Add AutoMapper
+            services.AddAutoMapper(typeof(DictionaryProfile),
+                                   typeof(TagProfile),
+                                   typeof(TranslatedWordProfile),
+                                   typeof(UserProfile),
+                                   typeof(WordProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

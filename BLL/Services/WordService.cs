@@ -1,4 +1,5 @@
 ﻿using BLL.Exceptions;
+using BLL.Interfaces;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Services
 {
-    public class WordService : BaseGenaricService<Word>
+    public class WordService : BaseGenaricService<Word>, IWordService
     {
         public WordService(EnglishContext context) : base(context) { }
 

@@ -1,4 +1,5 @@
 ﻿using BLL.Exceptions;
+using BLL.Interfaces;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Services
 {
-    public class DictionaryService : BaseGenaricService<EnglishDictionary> 
+    public class DictionaryService : BaseGenaricService<EnglishDictionary>, IDictionaryService
     {
         public DictionaryService(EnglishContext context) : base(context) { }
 

@@ -1,4 +1,5 @@
 ﻿using BLL.Exceptions;
+using BLL.Interfaces;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models;
@@ -10,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace BLL.Services
 {
-    public class TagService : BaseGenaricService<Tag>
+    public class TagService : BaseGenaricService<Tag>, ITagService
     {
-        public TagService(EnglishContext context): base(context) { }
+        public TagService(EnglishContext context) : base(context) { }
 
         public override async Task<Tag> GetByIdAsync(int id)
         {
