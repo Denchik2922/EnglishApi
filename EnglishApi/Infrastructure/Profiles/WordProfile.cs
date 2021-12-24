@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using EnglishApi.Dto;
 using Models;
-using System.Linq;
-
 
 namespace EnglishApi.Infrastructure.Profiles
 {
@@ -10,10 +8,9 @@ namespace EnglishApi.Infrastructure.Profiles
 	{
 		public WordProfile()
 		{
+			CreateMap<Word, Word>().ForMember(w => w.Dictionary, opt => opt.Ignore());
 			CreateMap<Word, WordDto>();
 			CreateMap<WordDto, Word>();
-			CreateMap<Word, WordDetailsDto>();
-			CreateMap<WordDetailsDto, Word>();
 		}
 	}
 }

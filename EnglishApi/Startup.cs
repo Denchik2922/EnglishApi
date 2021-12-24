@@ -54,6 +54,8 @@ namespace EnglishApi
             services.AddScoped(typeof(IBaseGenaricService<>), typeof(BaseGenaricService<>));
             services.AddScoped<ITranslatedWordService, TranslatedWordService>();
             services.AddScoped<IWordService, WordService>();
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IUserService, UserService>();
 
             //Add AutoMapper
             services.AddAutoMapper(typeof(DictionaryProfile),

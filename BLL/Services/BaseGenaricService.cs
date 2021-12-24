@@ -44,14 +44,14 @@ namespace BLL.Services
             return entity;
         }
 
-        public async Task<ICollection<T>> GetAllAsync()
+        public virtual async Task<ICollection<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
         }
 
         public virtual async Task UpdateAsync(T entity)
         {
-            _dbSet.Update(entity);
+            _context.Entry(entity).State = EntityState.Modified;
             await _context.SaveChangesAsync();
         }
     }

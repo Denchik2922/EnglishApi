@@ -9,11 +9,11 @@ namespace DAL
     {
         public EnglishContext(DbContextOptions<EnglishContext> options): base(options){}
 
-        public DbSet<EnglishDictionary> EnglishDictionaries { get; set; }
+        public DbSet<EnglishDictionary> EnglishDictionary { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TranslatedWord> TranslatedWords { get; set; }
-        public DbSet<Word> Words { get; set; }
-        public DbSet<TestResult> TestResults { get; set; }
+        public DbSet<Word> Word { get; set; }
+        public DbSet<TestResult> Results { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
