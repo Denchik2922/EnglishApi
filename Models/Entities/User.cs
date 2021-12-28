@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
-namespace Models
+namespace Models.Entities
 {
     public class User : IdentityUser
     {

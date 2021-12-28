@@ -4,7 +4,7 @@ using EnglishApi.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Models;
+using Models.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 namespace EnglishApi.Controllers

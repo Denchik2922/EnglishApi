@@ -1,4 +1,4 @@
-﻿using Models;
+﻿using Models.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

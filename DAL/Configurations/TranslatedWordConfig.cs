@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Models;
+using Models.Entities;
+
 namespace DAL.Configurations
 {
     public class TranslatedWordConfig : IEntityTypeConfiguration<TranslatedWord>

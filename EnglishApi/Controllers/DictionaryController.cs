@@ -2,7 +2,7 @@
 using BLL.Interfaces;
 using EnglishApi.Dto;
 using Microsoft.AspNetCore.Mvc;
-using Models;
+using Models.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -44,6 +44,22 @@ namespace EnglishApi.Controllers
             return Ok();
         }
 
+        /*[HttpPost("add-word")]
+        public async Task<ActionResult> AddWord(WordDto wordDto, int dictionaryId)
+        {
+            var word = _mapper.Map<Word>(wordDto);
+            await _dictionaryService.AddWordAsync(word, dictionaryId);
+            return Ok();
+        }
+
+        [HttpDelete("remove-word")]
+        public async Task<ActionResult> RemoveWord(WordDto wordDto, int dictionaryId)
+        {
+            var word = _mapper.Map<Word>(wordDto);
+            await _dictionaryService.RemoveWordAsync(word, dictionaryId);
+            return Ok();
+        }
+*/
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {

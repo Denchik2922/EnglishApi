@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using EnglishApi.Dto;
-using Models;
+using Models.Entities;
 using System.Linq;
 
 namespace EnglishApi.Infrastructure.Profiles

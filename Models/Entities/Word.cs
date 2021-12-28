@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Models
+namespace Models.Entities
 {
     public class Word
     {
@@ -10,6 +10,7 @@ namespace Models
         public int EnglishDictionaryId { get; set; }
         public EnglishDictionary Dictionary { get; set; }
         public string Transcription { get; set; }
-        public string Picture { get; set; }
+        public string PictureUrl { get; set; }
+        public string AudioUrl { get; set; }
     }
 }

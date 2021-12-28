@@ -3,7 +3,7 @@ using BLL.Interfaces;
 using EnglishApi.Dto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Models;
+using Models.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -15,10 +15,14 @@ namespace EnglishApi.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IWordService _wordService;
-        public WordController(IWordService wordService, IMapper mapper)
+        private readonly IHttpWordApiService _httpWordApi;
+        private readonly IHttpTranslateApiService _httpTranslateApi;
+        public WordController(IWordService wordService, IMapper mapper, IHttpWordApiService httpWordApi, IHttpTranslateApiService httpTranslateApi)
         {
             _wordService = wordService;
             _mapper = mapper;
+            _httpWordApi = httpWordApi;
+            _httpTranslateApi = httpTranslateApi;
         }
 
         [HttpGet]
@@ -41,6 +45,8 @@ namespace EnglishApi.Controllers
         public async Task<ActionResult> Add(WordDto wordDto)
         {
             var word = _mapper.Map<Word>(wordDto);
+            var phonetic = await _httpWordApi.GetPhoneticByWord(word.Name);
+            var translate = await _httpTranslateApi.GetTranslatedWord(word.Name);
             await _wordService.AddAsync(word);
             return Ok();
         }

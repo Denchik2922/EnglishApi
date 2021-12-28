@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Models;
+using Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +33,21 @@ namespace EnglishApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpClient("WordInfoClient", config =>
+            {
+                config.BaseAddress = new Uri(Configuration.GetSection("EnglishWordApiOptions")["Url"]);
+            });
+
+            services.AddHttpClient("TranslateClient", config =>
+            {
+                config.BaseAddress = new Uri("https://google-translate1.p.rapidapi.com/language/translate/v2/");
+                config.DefaultRequestHeaders.Add("x-rapidapi-host", "google-translate1.p.rapidapi.com");
+                config.DefaultRequestHeaders.Add("x-rapidapi-key", "47088f3db8msh71bf2869fd7b342p14da97jsnf2e9a9261e3c");
+            });
+
+            services.AddScoped<IHttpWordApiService, HttpWordApiService>();
+            services.AddScoped<IHttpTranslateApiService, HttpTranslateApiService>();
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
@@ -47,6 +62,11 @@ namespace EnglishApi
             //Identity setting
             services.AddIdentity<User, IdentityRole>()
                .AddEntityFrameworkStores<EnglishContext>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+            });
 
             //Services
             services.AddScoped<ITagService, TagService>();
