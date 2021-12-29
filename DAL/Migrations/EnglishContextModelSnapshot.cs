@@ -48,15 +48,15 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "93567abf-293b-47be-a85c-70448eca98d0",
-                            ConcurrencyStamp = "d9de46f0-2dfe-4f0b-b98f-79e32f17548c",
+                            Id = "46c02c43-3fc8-4008-b569-13d6ee2f2dec",
+                            ConcurrencyStamp = "cc004edd-28de-4524-a487-b216332f8501",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "6866058c-1bc6-4712-8388-3b991017d8e6",
-                            ConcurrencyStamp = "e9b4200d-9b50-4ae1-8c86-fe4af432076e",
+                            Id = "bd725e02-a878-49ee-90a2-8425bb15b044",
+                            ConcurrencyStamp = "6f021191-aedf-4459-aa29-f72f73a64a23",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -166,7 +166,7 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Models.EnglishDictionary", b =>
+            modelBuilder.Entity("Models.Entities.EnglishDictionary", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -193,10 +193,10 @@ namespace DAL.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("EnglishDictionary");
+                    b.ToTable("EnglishDictionaries");
                 });
 
-            modelBuilder.Entity("Models.EnglishDictionaryTag", b =>
+            modelBuilder.Entity("Models.Entities.EnglishDictionaryTag", b =>
                 {
                     b.Property<int>("EnglishDictionaryId")
                         .HasColumnType("int");
@@ -211,7 +211,7 @@ namespace DAL.Migrations
                     b.ToTable("EnglishDictionaryTag");
                 });
 
-            modelBuilder.Entity("Models.Tag", b =>
+            modelBuilder.Entity("Models.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -247,7 +247,7 @@ namespace DAL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Models.TestResult", b =>
+            modelBuilder.Entity("Models.Entities.TestResult", b =>
                 {
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -262,10 +262,10 @@ namespace DAL.Migrations
 
                     b.HasIndex("EnglishDictionaryId");
 
-                    b.ToTable("Results");
+                    b.ToTable("TestResults");
                 });
 
-            modelBuilder.Entity("Models.TranslatedWord", b =>
+            modelBuilder.Entity("Models.Entities.TranslatedWord", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -287,7 +287,7 @@ namespace DAL.Migrations
                     b.ToTable("TranslatedWords");
                 });
 
-            modelBuilder.Entity("Models.User", b =>
+            modelBuilder.Entity("Models.Entities.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -352,12 +352,15 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Models.Word", b =>
+            modelBuilder.Entity("Models.Entities.Word", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AudioUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("EnglishDictionaryId")
                         .HasColumnType("int");
@@ -367,7 +370,7 @@ namespace DAL.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Picture")
+                    b.Property<string>("PictureUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Transcription")
@@ -379,7 +382,7 @@ namespace DAL.Migrations
 
                     b.HasIndex("EnglishDictionaryId");
 
-                    b.ToTable("Word");
+                    b.ToTable("Words");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -393,7 +396,7 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Models.User", null)
+                    b.HasOne("Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -402,7 +405,7 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Models.User", null)
+                    b.HasOne("Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -417,7 +420,7 @@ namespace DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.User", null)
+                    b.HasOne("Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -426,31 +429,31 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Models.User", null)
+                    b.HasOne("Models.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Models.EnglishDictionary", b =>
+            modelBuilder.Entity("Models.Entities.EnglishDictionary", b =>
                 {
-                    b.HasOne("Models.User", "Creator")
+                    b.HasOne("Models.Entities.User", "Creator")
                         .WithMany("EnglishDictionaries")
                         .HasForeignKey("UserId");
 
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("Models.EnglishDictionaryTag", b =>
+            modelBuilder.Entity("Models.Entities.EnglishDictionaryTag", b =>
                 {
-                    b.HasOne("Models.EnglishDictionary", "EnglishDictionary")
+                    b.HasOne("Models.Entities.EnglishDictionary", "EnglishDictionary")
                         .WithMany("Tags")
                         .HasForeignKey("EnglishDictionaryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Tag", "Tag")
+                    b.HasOne("Models.Entities.Tag", "Tag")
                         .WithMany("EnglishDictionaries")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -461,15 +464,15 @@ namespace DAL.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("Models.TestResult", b =>
+            modelBuilder.Entity("Models.Entities.TestResult", b =>
                 {
-                    b.HasOne("Models.EnglishDictionary", "EnglishDictionary")
+                    b.HasOne("Models.Entities.EnglishDictionary", "EnglishDictionary")
                         .WithMany("TestResults")
                         .HasForeignKey("EnglishDictionaryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.User", "User")
+                    b.HasOne("Models.Entities.User", "User")
                         .WithMany("TestResults")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -480,9 +483,9 @@ namespace DAL.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Models.TranslatedWord", b =>
+            modelBuilder.Entity("Models.Entities.TranslatedWord", b =>
                 {
-                    b.HasOne("Models.Word", "Word")
+                    b.HasOne("Models.Entities.Word", "Word")
                         .WithMany("Translates")
                         .HasForeignKey("WordId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -491,9 +494,9 @@ namespace DAL.Migrations
                     b.Navigation("Word");
                 });
 
-            modelBuilder.Entity("Models.Word", b =>
+            modelBuilder.Entity("Models.Entities.Word", b =>
                 {
-                    b.HasOne("Models.EnglishDictionary", "Dictionary")
+                    b.HasOne("Models.Entities.EnglishDictionary", "Dictionary")
                         .WithMany("Words")
                         .HasForeignKey("EnglishDictionaryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -502,7 +505,7 @@ namespace DAL.Migrations
                     b.Navigation("Dictionary");
                 });
 
-            modelBuilder.Entity("Models.EnglishDictionary", b =>
+            modelBuilder.Entity("Models.Entities.EnglishDictionary", b =>
                 {
                     b.Navigation("Tags");
 
@@ -511,19 +514,19 @@ namespace DAL.Migrations
                     b.Navigation("Words");
                 });
 
-            modelBuilder.Entity("Models.Tag", b =>
+            modelBuilder.Entity("Models.Entities.Tag", b =>
                 {
                     b.Navigation("EnglishDictionaries");
                 });
 
-            modelBuilder.Entity("Models.User", b =>
+            modelBuilder.Entity("Models.Entities.User", b =>
                 {
                     b.Navigation("EnglishDictionaries");
 
                     b.Navigation("TestResults");
                 });
 
-            modelBuilder.Entity("Models.Word", b =>
+            modelBuilder.Entity("Models.Entities.Word", b =>
                 {
                     b.Navigation("Translates");
                 });

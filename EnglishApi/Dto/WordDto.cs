@@ -10,5 +10,7 @@ namespace EnglishApi.Dto
         public int EnglishDictionaryId { get; set; }
         public string Transcription { get; set; }
         public string Picture { get; set; }
+
+        public string Audio { get; set; }
     }
 }

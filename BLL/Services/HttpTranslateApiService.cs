@@ -10,26 +10,28 @@ namespace BLL.Services
     public class HttpTranslateApiService : IHttpTranslateApiService
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _config;
         public HttpTranslateApiService(IHttpClientFactory httpClientFactory, IConfiguration config)
         {
             _httpClientFactory = httpClientFactory;
+            _config = config.GetSection("TranslateApiOptions");
         }
 
         public async Task<string> GetTranslatedWord(string word)
         {
+            string translatedWord;
             var httpClient = _httpClientFactory.CreateClient("TranslateClient");
+
             var request = new HttpRequestMessage
             {
-
+                Method = HttpMethod.Post,
                 Content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
-                    { "q", "Hello, world!" },
-                    { "target", "es" },
-                    { "source", "en" },
+                    { "q", word },
+                    { "target", _config["target"] },
+                    { "source", _config["source"] },
                 }),
             };
-
-            string translatedWord;
 
             using (var responce = await httpClient.SendAsync(request))
             {
@@ -37,7 +39,7 @@ namespace BLL.Services
                 var content = await responce.Content.ReadAsStringAsync();
 
                 var Jobject = JObject.Parse(content);
-                translatedWord = Jobject["phonetics"][0].ToObject<string>();
+                translatedWord = Jobject["data"]["translations"][0]["translatedText"].ToObject<string>();
             }
             return translatedWord;
         }

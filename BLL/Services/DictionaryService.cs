@@ -19,14 +19,14 @@ namespace BLL.Services
 
         public async override Task<ICollection<EnglishDictionary>> GetAllAsync()
         {
-            return await _context.EnglishDictionary
+            return await _context.EnglishDictionaries
                                 .Include(d => d.Tags)
                                 .ThenInclude(t => t.Tag).ToListAsync();
         }
 
         public override async Task<EnglishDictionary> GetByIdAsync(int id)
         {
-            var dictionary = await _context.EnglishDictionary
+            var dictionary = await _context.EnglishDictionaries
                                              .Include(d => d.Tags)
                                              .ThenInclude(t => t.Tag)
                                              .Include(d => d.Creator)
@@ -41,32 +41,6 @@ namespace BLL.Services
             }
             return dictionary;
         }
-
-        /*private async Task<EnglishDictionary> GetEnglishDictionary(int dictionaryId)
-        {
-            var dictionary = await _context.EnglishDictionary
-                                            .Include(d => d.Words)
-                                            .FirstOrDefaultAsync(d => d.Id == dictionaryId);
-            if (dictionary == null)
-            {
-                throw new ItemNotFoundException($"{typeof(EnglishDictionary).Name} with id {dictionaryId} not found");
-            }
-            return dictionary;
-        }
-
-        public async Task AddWordAsync(Word word, int dictionaryId)
-        {
-            var dictionary = await GetEnglishDictionary(dictionaryId);
-            dictionary.Words.Add(word);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task RemoveWordAsync(Word word, int dictionaryId)
-        {
-            var dictionary = await GetEnglishDictionary(dictionaryId);
-            dictionary.Words.Remove(word);
-            await _context.SaveChangesAsync();
-        }*/
 
         public async override Task UpdateAsync(EnglishDictionary entity)
         {

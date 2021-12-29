@@ -33,18 +33,27 @@ namespace EnglishApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Http Clients
             services.AddHttpClient("WordInfoClient", config =>
             {
                 config.BaseAddress = new Uri(Configuration.GetSection("EnglishWordApiOptions")["Url"]);
             });
 
+            var translateApiOpt = Configuration.GetSection("TranslateApiOptions");
             services.AddHttpClient("TranslateClient", config =>
             {
-                config.BaseAddress = new Uri("https://google-translate1.p.rapidapi.com/language/translate/v2/");
-                config.DefaultRequestHeaders.Add("x-rapidapi-host", "google-translate1.p.rapidapi.com");
-                config.DefaultRequestHeaders.Add("x-rapidapi-key", "47088f3db8msh71bf2869fd7b342p14da97jsnf2e9a9261e3c");
+                config.BaseAddress = new Uri(translateApiOpt["Url"]);
+                config.DefaultRequestHeaders.Add("x-rapidapi-host", translateApiOpt["Host"]);
+                config.DefaultRequestHeaders.Add("x-rapidapi-key", translateApiOpt["Key"]);
             });
 
+            services.AddHttpClient("PhotoApiClient", config =>
+            {
+                config.BaseAddress = new Uri(Configuration.GetSection("PhotoApiOptions")["Url"]);
+            });
+
+            //Http Services
+            services.AddScoped<IHttpPhotoApiService, HttpPhotoApiService>();
             services.AddScoped<IHttpWordApiService, HttpWordApiService>();
             services.AddScoped<IHttpTranslateApiService, HttpTranslateApiService>();
 
@@ -76,6 +85,7 @@ namespace EnglishApi
             services.AddScoped<IWordService, WordService>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IGenerateWordService, GenerateWordService>();
 
             //Add AutoMapper
             services.AddAutoMapper(typeof(DictionaryProfile),

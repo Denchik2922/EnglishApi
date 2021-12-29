@@ -1,5 +1,4 @@
 ﻿using BLL.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Models.Apis;
 using Newtonsoft.Json.Linq;
 using System.Net.Http;
@@ -24,10 +23,10 @@ namespace BLL.Services
                 HttpCompletionOption.ResponseHeadersRead))
             {
                 responce.EnsureSuccessStatusCode();
-                var content = (await responce.Content.ReadAsStringAsync()).TrimStart('[').TrimEnd(']');
+                var content = await responce.Content.ReadAsStringAsync();
                 
-                var Jobject = JObject.Parse(content);
-                wordPhonetic = Jobject["phonetics"][0].ToObject<WordPhonetic>();
+                var arrObject = JArray.Parse(content);
+                wordPhonetic = arrObject[0]["phonetics"][0].ToObject<WordPhonetic>();
             }
             return wordPhonetic;
         }

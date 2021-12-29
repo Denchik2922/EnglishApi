@@ -19,14 +19,14 @@ namespace BLL.Services
 
         public async override Task<ICollection<Word>> GetAllAsync()
         {
-            return await _context.Word
+            return await _context.Words
                                 .Include(w => w.Dictionary)
                                 .Include(w => w.Translates).ToListAsync();
         }
 
         public override async Task<Word> GetByIdAsync(int id)
         {
-            var word = await _context.Word
+            var word = await _context.Words
                                 .Include(w => w.Dictionary)
                                 .Include(w => w.Translates)
                                 .FirstOrDefaultAsync(w => w.Id == id);

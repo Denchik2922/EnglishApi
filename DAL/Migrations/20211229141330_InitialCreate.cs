@@ -167,7 +167,7 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "EnglishDictionary",
+                name: "EnglishDictionaries",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -179,9 +179,9 @@ namespace DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EnglishDictionary", x => x.Id);
+                    table.PrimaryKey("PK_EnglishDictionaries", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EnglishDictionary_AspNetUsers_UserId",
+                        name: "FK_EnglishDictionaries_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -199,9 +199,9 @@ namespace DAL.Migrations
                 {
                     table.PrimaryKey("PK_EnglishDictionaryTag", x => new { x.EnglishDictionaryId, x.TagId });
                     table.ForeignKey(
-                        name: "FK_EnglishDictionaryTag_EnglishDictionary_EnglishDictionaryId",
+                        name: "FK_EnglishDictionaryTag_EnglishDictionaries_EnglishDictionaryId",
                         column: x => x.EnglishDictionaryId,
-                        principalTable: "EnglishDictionary",
+                        principalTable: "EnglishDictionaries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -213,7 +213,7 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Results",
+                name: "TestResults",
                 columns: table => new
                 {
                     EnglishDictionaryId = table.Column<int>(type: "int", nullable: false),
@@ -222,23 +222,23 @@ namespace DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Results", x => new { x.UserId, x.EnglishDictionaryId });
+                    table.PrimaryKey("PK_TestResults", x => new { x.UserId, x.EnglishDictionaryId });
                     table.ForeignKey(
-                        name: "FK_Results_AspNetUsers_UserId",
+                        name: "FK_TestResults_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Results_EnglishDictionary_EnglishDictionaryId",
+                        name: "FK_TestResults_EnglishDictionaries_EnglishDictionaryId",
                         column: x => x.EnglishDictionaryId,
-                        principalTable: "EnglishDictionary",
+                        principalTable: "EnglishDictionaries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Word",
+                name: "Words",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -246,15 +246,16 @@ namespace DAL.Migrations
                     Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     EnglishDictionaryId = table.Column<int>(type: "int", nullable: false),
                     Transcription = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Picture = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AudioUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Word", x => x.Id);
+                    table.PrimaryKey("PK_Words", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Word_EnglishDictionary_EnglishDictionaryId",
+                        name: "FK_Words_EnglishDictionaries_EnglishDictionaryId",
                         column: x => x.EnglishDictionaryId,
-                        principalTable: "EnglishDictionary",
+                        principalTable: "EnglishDictionaries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -272,9 +273,9 @@ namespace DAL.Migrations
                 {
                     table.PrimaryKey("PK_TranslatedWords", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TranslatedWords_Word_WordId",
+                        name: "FK_TranslatedWords_Words_WordId",
                         column: x => x.WordId,
-                        principalTable: "Word",
+                        principalTable: "Words",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -284,8 +285,8 @@ namespace DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "93567abf-293b-47be-a85c-70448eca98d0", "d9de46f0-2dfe-4f0b-b98f-79e32f17548c", "User", "USER" },
-                    { "6866058c-1bc6-4712-8388-3b991017d8e6", "e9b4200d-9b50-4ae1-8c86-fe4af432076e", "Admin", "ADMIN" }
+                    { "46c02c43-3fc8-4008-b569-13d6ee2f2dec", "cc004edd-28de-4524-a487-b216332f8501", "User", "USER" },
+                    { "bd725e02-a878-49ee-90a2-8425bb15b044", "6f021191-aedf-4459-aa29-f72f73a64a23", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -337,8 +338,8 @@ namespace DAL.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EnglishDictionary_UserId",
-                table: "EnglishDictionary",
+                name: "IX_EnglishDictionaries_UserId",
+                table: "EnglishDictionaries",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -347,8 +348,8 @@ namespace DAL.Migrations
                 column: "TagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Results_EnglishDictionaryId",
-                table: "Results",
+                name: "IX_TestResults_EnglishDictionaryId",
+                table: "TestResults",
                 column: "EnglishDictionaryId");
 
             migrationBuilder.CreateIndex(
@@ -357,8 +358,8 @@ namespace DAL.Migrations
                 column: "WordId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Word_EnglishDictionaryId",
-                table: "Word",
+                name: "IX_Words_EnglishDictionaryId",
+                table: "Words",
                 column: "EnglishDictionaryId");
         }
 
@@ -383,7 +384,7 @@ namespace DAL.Migrations
                 name: "EnglishDictionaryTag");
 
             migrationBuilder.DropTable(
-                name: "Results");
+                name: "TestResults");
 
             migrationBuilder.DropTable(
                 name: "TranslatedWords");
@@ -395,10 +396,10 @@ namespace DAL.Migrations
                 name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "Word");
+                name: "Words");
 
             migrationBuilder.DropTable(
-                name: "EnglishDictionary");
+                name: "EnglishDictionaries");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

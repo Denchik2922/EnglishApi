@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace Models.Apis
 {
-    internal class TranslateApiService
+    public class WordPhoto
     {
+        public string PreviewUrl { get; set; }
     }
 }
