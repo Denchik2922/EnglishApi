@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BLL.Interfaces
+namespace BLL.Interfaces.Entities
 {
     public interface IBaseGenaricService<T> where T : class
     {

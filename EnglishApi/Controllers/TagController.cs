@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using BLL.Interfaces;
+using BLL.Interfaces.Entities;
 using EnglishApi.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;

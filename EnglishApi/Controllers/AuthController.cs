@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using BLL.Interfaces;
+using BLL.Interfaces.Entities;
 using EnglishApi.Dto;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+
 namespace EnglishApi.Controllers
 {
     [Route("api/[controller]")]

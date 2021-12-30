@@ -9,10 +9,12 @@ namespace EnglishApi.Infrastructure.Profiles
 	{
 		public DictionaryProfile()
 		{
-			CreateMap<EnglishDictionary, EnglishDictionary>();
+			CreateMap<EnglishDictionary, EnglishDictionary>()
+				.ForMember(dictionary => dictionary.Words, opt => opt.Ignore());
 			CreateMap<EnglishDictionary, DictionaryDto>()
 				.ForMember(dictionaryDto => dictionaryDto.Tags, dictionary => dictionary.MapFrom(d => d.Tags.Select(t => t.Tag)));
 			CreateMap<DictionaryDto, EnglishDictionary>()
+				
 				.ForMember(dictionary => dictionary.Tags, opt => opt
 					 .MapFrom(dictionaryDto => dictionaryDto.Tags.Select(t => new EnglishDictionaryTag { TagId = t.Id })));
 

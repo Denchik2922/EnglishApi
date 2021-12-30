@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using BLL.Exceptions;
-using BLL.Interfaces;
+using BLL.Interfaces.Entities;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace BLL.Services.Entities
 {
     public class DictionaryService : BaseGenaricService<EnglishDictionary>, IDictionaryService
     {
@@ -33,6 +33,7 @@ namespace BLL.Services
                                              .Include(d => d.TestResults)
                                              .ThenInclude(r => r.User)
                                              .Include(d => d.Words)
+                                             .ThenInclude(w => w.Translates)
                                              .AsSplitQuery()
                                              .FirstOrDefaultAsync(d => d.Id == id);
             if (dictionary == null)

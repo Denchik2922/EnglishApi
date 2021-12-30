@@ -1,9 +1,9 @@
-﻿using BLL.Interfaces;
+﻿using BLL.Interfaces.HttpApi;
 using Models.Apis;
 
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace BLL.Services.HttpApi
 {
     public class GenerateWordService : IGenerateWordService
     {

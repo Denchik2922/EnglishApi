@@ -1,7 +1,6 @@
 ﻿using Models.Entities;
-using System.Threading.Tasks;
 
-namespace BLL.Interfaces
+namespace BLL.Interfaces.Entities
 {
     public interface IWordService : IBaseGenaricService<Word>
     {

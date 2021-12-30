@@ -1,4 +1,4 @@
-﻿using BLL.Interfaces;
+﻿using BLL.Interfaces.HttpApi;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Models.Apis;
@@ -6,9 +6,8 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web;
 
-namespace BLL.Services
+namespace BLL.Services.HttpApi
 {
     public class HttpPhotoApiService : IHttpPhotoApiService
     {

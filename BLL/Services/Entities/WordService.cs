@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using BLL.Exceptions;
-using BLL.Interfaces;
+using BLL.Interfaces.Entities;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace BLL.Services.Entities
 {
     public class WordService : BaseGenaricService<Word>, IWordService
     {

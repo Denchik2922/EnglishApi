@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using BLL.Interfaces;
+using BLL.Interfaces.Entities;
+using BLL.Interfaces.HttpApi;
 using EnglishApi.Dto;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using System.Collections.Generic;

@@ -1,11 +1,11 @@
-﻿using BLL.Interfaces;
+﻿using BLL.Interfaces.HttpApi;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace BLL.Services.HttpApi
 {
     public class HttpTranslateApiService : IHttpTranslateApiService
     {

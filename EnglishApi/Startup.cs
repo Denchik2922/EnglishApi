@@ -1,23 +1,21 @@
-using BLL.Interfaces;
-using BLL.Services;
+using BLL.Interfaces.Entities;
+using BLL.Interfaces.HttpApi;
+using BLL.Interfaces.Testing;
+using BLL.Services.Entities;
+using BLL.Services.HttpApi;
+using BLL.Services.Testing;
 using DAL;
 using EnglishApi.Infrastructure.Profiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Models.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EnglishApi
 {
@@ -86,13 +84,15 @@ namespace EnglishApi
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGenerateWordService, GenerateWordService>();
+            services.AddScoped<IMatchingWordTestService, MatchingWordTestService>();
 
             //Add AutoMapper
             services.AddAutoMapper(typeof(DictionaryProfile),
                                    typeof(TagProfile),
                                    typeof(TranslatedWordProfile),
                                    typeof(UserProfile),
-                                   typeof(WordProfile));
+                                   typeof(WordProfile),
+                                   typeof(TestResultProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,13 +1,10 @@
-﻿using BLL.Interfaces;
+﻿using BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Identity;
 using Models.Entities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.Services
+namespace BLL.Services.Entities
 {
     public class AuthService : IAuthService
     {
