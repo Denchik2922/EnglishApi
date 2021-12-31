@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Models.Entities;
 using System;
+using System.Linq;
 
 namespace EnglishApi
 {
@@ -50,10 +51,6 @@ namespace EnglishApi
                 config.BaseAddress = new Uri(Configuration.GetSection("PhotoApiOptions")["Url"]);
             });
 
-            //Http Services
-            services.AddScoped<IHttpPhotoApiService, HttpPhotoApiService>();
-            services.AddScoped<IHttpWordApiService, HttpWordApiService>();
-            services.AddScoped<IHttpTranslateApiService, HttpTranslateApiService>();
 
             services.AddControllers();
 
@@ -75,7 +72,7 @@ namespace EnglishApi
                 options.User.RequireUniqueEmail = true;
             });
 
-            //Services
+            //Entity Services
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IDictionaryService, DictionaryService>();
             services.AddScoped(typeof(IBaseGenaricService<>), typeof(BaseGenaricService<>));
@@ -84,7 +81,16 @@ namespace EnglishApi
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGenerateWordService, GenerateWordService>();
-            services.AddScoped<IMatchingWordTestService, MatchingWordTestService>();
+
+            //Http Services
+            services.AddScoped<IHttpPhotoApiService, HttpPhotoApiService>();
+            services.AddScoped<IHttpWordApiService, HttpWordApiService>();
+            services.AddScoped<IHttpTranslateApiService, HttpTranslateApiService>();
+
+            //Testing Services
+            services.AddScoped<IMatchingWordTest, MatchingWordTest>();
+            services.AddScoped<ISpellingTranslationTest, SpellingTranslationTest>();
+
 
             //Add AutoMapper
             services.AddAutoMapper(typeof(DictionaryProfile),

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Models.Tests
 {
-    public class WordForTest
+    public class MatchingWordTest : IWordTest
     {
         public string WordName { get; set; }
         public string CorrectAnswer { get; set; }

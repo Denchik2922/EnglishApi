@@ -24,7 +24,5 @@ namespace Models.Tests
             }
         }
         public bool HasNextQuestion => CurrentQuestion < CountQuestion;
-
-        public WordForTest WordForTest;
     }
 }

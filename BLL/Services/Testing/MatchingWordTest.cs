@@ -8,23 +8,22 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Testing
 {
-    public class MatchingWordTestService : IMatchingWordTestService
+    public class MatchingWordTest : IMatchingWordTest
     {
-        protected readonly EnglishContext _context;
-        public MatchingWordTestService(EnglishContext context)
+        private readonly EnglishContext _context;
+        public MatchingWordTest(EnglishContext context)
         {
             _context = context;
         }
-
-        public async Task<TestParameters> StartTest(TestParameters testParameters)
+        public async Task<IWordTest> GetPartOfTest(TestParameters testParameters)
         {
-           var word = await _context.Words
-                                    .Include(w => w.Translates)
-                                    .AsNoTracking()
-                                    .Where(w => w.EnglishDictionaryId == testParameters.DictionaryId)
-                                    .Skip((testParameters.CurrentQuestion - 1) * testParameters.CountWord)
-                                    .Take(testParameters.CountWord)
-                                    .FirstOrDefaultAsync();
+            var word = await _context.Words
+                                     .Include(w => w.Translates)
+                                     .AsNoTracking()
+                                     .Where(w => w.EnglishDictionaryId == testParameters.DictionaryId)
+                                     .Skip((testParameters.CurrentQuestion - 1) * testParameters.CountWord)
+                                     .Take(testParameters.CountWord)
+                                     .FirstOrDefaultAsync();
 
             var translates = await _context.TranslatedWords.AsNoTracking()
                                                 .Where(t => t.WordId != word.Id)
@@ -35,15 +34,15 @@ namespace BLL.Services.Testing
 
             string currentTranslate = word.Translates.Select(t => t.Name).FirstOrDefault();
             translates.Add(currentTranslate);
-            var wordForTest = new WordForTest()
+
+            var wordForTest = new Models.Tests.MatchingWordTest()
             {
                 WordName = word.Name,
                 CorrectAnswer = currentTranslate,
-                Translates = translates         
+                Translates = translates
             };
 
-            testParameters.WordForTest = wordForTest;
-            return testParameters;
+            return wordForTest;
         }
     }
 }
