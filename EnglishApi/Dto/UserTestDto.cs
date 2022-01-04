@@ -2,7 +2,7 @@
 {
     public class UserTestDto
     {
-        public string Id { get; set; }
+        public string UserId { get; set; }
         public double Score { get; set; }
     }
 }

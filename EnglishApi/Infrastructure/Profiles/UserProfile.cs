@@ -12,6 +12,7 @@ namespace EnglishApi.Infrastructure.Profiles
 			CreateMap<User, UserDto>()
 				.ForMember(userDto => userDto.DictionaryTests, user => user.MapFrom(u => u.TestResults.Select(t => t.EnglishDictionary)));
 			CreateMap<UserDto, User>();
+			CreateMap<User, UserTestDto>();
 		}
 	}
 }

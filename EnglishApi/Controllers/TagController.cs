@@ -39,9 +39,13 @@ namespace EnglishApi.Controllers
         [HttpPost]
         public async Task<ActionResult> Add(TagDto tagDto)
         {
-            var tag = _mapper.Map<Tag>(tagDto);
-            await _tagService.AddAsync(tag);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                var tag = _mapper.Map<Tag>(tagDto);
+                await _tagService.AddAsync(tag);
+                return Ok();
+            }
+            return ValidationProblem();
         }
 
         [HttpDelete]
@@ -54,9 +58,13 @@ namespace EnglishApi.Controllers
         [HttpPut]
         public async Task<ActionResult> Update(TagDto tagDto)
         {
-            var tag = _mapper.Map<Tag>(tagDto);
-            await _tagService.UpdateAsync(tag);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                var tag = _mapper.Map<Tag>(tagDto);
+                await _tagService.UpdateAsync(tag);
+                return Ok();
+            }
+            return ValidationProblem();
         }
     }
 }

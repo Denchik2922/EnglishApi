@@ -2,6 +2,7 @@
 using BLL.Interfaces.Entities;
 using EnglishApi.Dto;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Models.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,10 +15,12 @@ namespace EnglishApi.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IDictionaryService _dictionaryService;
-        public DictionaryController(IDictionaryService dictionaryService, IMapper mapper)
+        private readonly ILogger<DictionaryController> _logger;
+        public DictionaryController(IDictionaryService dictionaryService, IMapper mapper, ILogger<DictionaryController> logger)
         {
             _dictionaryService = dictionaryService;
             _mapper = mapper;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -39,27 +42,15 @@ namespace EnglishApi.Controllers
         [HttpPost]
         public async Task<ActionResult> Add(DictionaryDto dictionaryDto)
         {
-            var dictionary = _mapper.Map<EnglishDictionary>(dictionaryDto);
-            await _dictionaryService.AddAsync(dictionary);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                var dictionary = _mapper.Map<EnglishDictionary>(dictionaryDto);
+                await _dictionaryService.AddAsync(dictionary);
+                return Ok();
+            }
+            return ValidationProblem();
         }
 
-        /*[HttpPost("add-word")]
-        public async Task<ActionResult> AddWord(WordDto wordDto, int dictionaryId)
-        {
-            var word = _mapper.Map<Word>(wordDto);
-            await _dictionaryService.AddWordAsync(word, dictionaryId);
-            return Ok();
-        }
-
-        [HttpDelete("remove-word")]
-        public async Task<ActionResult> RemoveWord(WordDto wordDto, int dictionaryId)
-        {
-            var word = _mapper.Map<Word>(wordDto);
-            await _dictionaryService.RemoveWordAsync(word, dictionaryId);
-            return Ok();
-        }
-*/
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
@@ -70,9 +61,13 @@ namespace EnglishApi.Controllers
         [HttpPut]
         public async Task<ActionResult> Update(DictionaryDto dictionaryDto)
         {
-            var dictionary = _mapper.Map<EnglishDictionary>(dictionaryDto);
-            await _dictionaryService.UpdateAsync(dictionary);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                var dictionary = _mapper.Map<EnglishDictionary>(dictionaryDto);
+                await _dictionaryService.UpdateAsync(dictionary);
+                return Ok();
+            }
+            return ValidationProblem();
         }
     }
 }
