@@ -48,7 +48,7 @@ namespace EnglishApi.Controllers
                 await _dictionaryService.AddAsync(dictionary);
                 return Ok();
             }
-            return ValidationProblem();
+            return BadRequest(ModelState);
         }
 
         [HttpDelete]
@@ -67,7 +67,7 @@ namespace EnglishApi.Controllers
                 await _dictionaryService.UpdateAsync(dictionary);
                 return Ok();
             }
-            return ValidationProblem();
+            return BadRequest(ModelState);
         }
     }
 }

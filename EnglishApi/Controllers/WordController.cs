@@ -42,9 +42,13 @@ namespace EnglishApi.Controllers
         [HttpPost]
         public async Task<ActionResult> Add(WordDto wordDto)
         {
-            var word = _mapper.Map<Word>(wordDto);
-            await _wordService.AddAsync(word);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                var word = _mapper.Map<Word>(wordDto);
+                await _wordService.AddAsync(word);
+                return Ok();
+            }
+            return BadRequest(ModelState);
         }
 
         [HttpPost]
@@ -65,9 +69,13 @@ namespace EnglishApi.Controllers
         [HttpPut]
         public async Task<ActionResult> Update(WordDto wordDto)
         {
-            var word = _mapper.Map<Word>(wordDto);
-            await _wordService.UpdateAsync(word);
-            return Ok();
+            if (ModelState.IsValid)
+            {
+                var word = _mapper.Map<Word>(wordDto);
+                await _wordService.UpdateAsync(word);
+                return Ok();
+            }
+            return BadRequest(ModelState);
         }
     }
 }

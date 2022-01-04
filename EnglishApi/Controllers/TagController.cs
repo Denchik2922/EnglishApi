@@ -45,7 +45,7 @@ namespace EnglishApi.Controllers
                 await _tagService.AddAsync(tag);
                 return Ok();
             }
-            return ValidationProblem();
+            return BadRequest(ModelState);
         }
 
         [HttpDelete]
@@ -64,7 +64,7 @@ namespace EnglishApi.Controllers
                 await _tagService.UpdateAsync(tag);
                 return Ok();
             }
-            return ValidationProblem();
+            return BadRequest(ModelState);
         }
     }
 }

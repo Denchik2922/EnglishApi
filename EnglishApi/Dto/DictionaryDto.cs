@@ -5,13 +5,18 @@ namespace EnglishApi.Dto
 {
     public class DictionaryDto
     {
+        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
+        [MinLength(4)]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Description is required")]
+        [MinLength(8)]
         public string Description { get; set; }
+
+        [Required(ErrorMessage = "Tags is required")]
         public ICollection<TagDto> Tags { get; set; }
 
         [Required(ErrorMessage = "User id is required")]
