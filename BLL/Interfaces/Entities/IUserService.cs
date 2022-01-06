@@ -6,6 +6,6 @@ namespace BLL.Interfaces.Entities
 {
     public interface IUserService
     {
-        Task<IEnumerable<User>> GetAll();
+        Task<ICollection<User>> GetAll();
     }
 }

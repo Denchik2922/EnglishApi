@@ -16,6 +16,7 @@ namespace EnglishApi.Controllers
         private readonly IMapper _mapper;
         private readonly IDictionaryService _dictionaryService;
         private readonly ILogger<DictionaryController> _logger;
+
         public DictionaryController(IDictionaryService dictionaryService, IMapper mapper, ILogger<DictionaryController> logger)
         {
             _dictionaryService = dictionaryService;

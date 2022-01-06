@@ -1,4 +1,5 @@
 ﻿using BLL.Interfaces.Entities;
+using DAL;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -9,16 +10,15 @@ namespace BLL.Services.Entities
 {
     public class UserService : IUserService
     {
-        private readonly UserManager<User> _userManager;
-
-        public UserService(UserManager<User> userManager)
+        private readonly EnglishContext _context;
+        public UserService(EnglishContext context)
         {
-            _userManager = userManager;
+            _context = context;
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<ICollection<User>> GetAll()
         {
-            return await _userManager.Users.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
     }
 }

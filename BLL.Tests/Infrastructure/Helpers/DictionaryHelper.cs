@@ -14,7 +14,6 @@ namespace BLL.Tests.Infrastructure.Helpers
                 Description = $"Dictionary description {id}",
                 UserId = "b54e2482-5cd6-40d1-be4f-0d14e7e614e7",
                 IsPrivate = true,
-
             };
         }
 

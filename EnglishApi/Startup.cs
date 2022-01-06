@@ -78,7 +78,6 @@ namespace EnglishApi
             //Entity Services
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IDictionaryService, DictionaryService>();
-            services.AddScoped(typeof(IBaseGenaricService<>), typeof(BaseGenaricService<>));
             services.AddScoped<ITranslatedWordService, TranslatedWordService>();
             services.AddScoped<IWordService, WordService>();
             services.AddScoped<IAuthService, AuthService>();
