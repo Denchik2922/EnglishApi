@@ -19,7 +19,8 @@ namespace EnglishApi.Infrastructure.Profiles
 
 			CreateMap<EnglishDictionary, DictionaryDetailsDto>()
 				.ForMember(dictionaryDto => dictionaryDto.Tags, dictionary => dictionary.MapFrom(d => d.Tags.Select(t => t.Tag)))
-				.ForMember(dictionaryDto => dictionaryDto.TestUsers, dictionary => dictionary.MapFrom(d => d.TestResults));
+				.ForMember(dictionaryDto => dictionaryDto.MatchingTestUsers, dictionary => dictionary.MapFrom(d => d.MatchingTestResults))
+				.ForMember(dictionaryDto => dictionaryDto.SpellingTestUsers, dictionary => dictionary.MapFrom(d => d.SpellingTestResults));
 		}
 	}
 }

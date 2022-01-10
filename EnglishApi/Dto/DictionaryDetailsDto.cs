@@ -10,7 +10,8 @@ namespace EnglishApi.Dto
         public string UserId { get; set; }
         public ICollection<TagDto> Tags { get; set; } 
         public ICollection<WordDto> Words { get; set; }
-        public ICollection<UserTestDto> TestUsers { get; set; }
+        public ICollection<UserTestDto> SpellingTestUsers { get; set; }
+        public ICollection<UserTestDto> MatchingTestUsers { get; set; }
         public bool IsPrivate { get; set; }
     }
 }

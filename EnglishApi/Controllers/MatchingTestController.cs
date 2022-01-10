@@ -15,14 +15,22 @@ namespace EnglishApi.Controllers
     public class MatchingTestController : ControllerBase
     {
         private readonly IMatchingWordTest _matchingTest;
-        private readonly IBaseGenaricService<TestResult> _testService;
+        
         private readonly IMapper _mapper;
+        private readonly IBaseGenaricService<ResultForMatchingTest> _testService;
         public MatchingTestController(IMapper mapper,
-            IMatchingWordTest matchingTest, IBaseGenaricService<TestResult> testService)
+            IMatchingWordTest matchingTest, IBaseGenaricService<ResultForMatchingTest> testService)
         {
             _matchingTest = matchingTest;
             _testService = testService;
             _mapper = mapper;
+        }
+
+        [HttpGet("{Id}")]
+        public async Task<ActionResult> StartTest(int Id)
+        {
+            var test = await _matchingTest.StartTest(Id);
+            return Ok(test);
         }
 
         [HttpPost]
@@ -30,7 +38,14 @@ namespace EnglishApi.Controllers
         public async Task<IActionResult> GetTest(TestParameters testParameters)
         {
             var test = await _matchingTest.GetPartOfTest(testParameters);
-            Response.Headers.Add("Test-Info", JsonConvert.SerializeObject(testParameters));
+            return Ok(test);
+        }
+
+        [HttpPost]
+        [Route("check-answer")]
+        public async Task<IActionResult> CheckAnswer(ParamsForAnswer testParameters)
+        {
+            var test = await _matchingTest.CheckQuestion(testParameters);
             return Ok(test);
         }
 
@@ -40,7 +55,7 @@ namespace EnglishApi.Controllers
         [Route("finish-test")]
         public async Task<IActionResult> FinishTest(TestResultDto testResult)
         {
-            TestResult test = _mapper.Map<TestResult>(testResult);
+            var test = _mapper.Map<ResultForMatchingTest>(testResult);
             await _testService.AddAsync(test);
             return Ok();
         }

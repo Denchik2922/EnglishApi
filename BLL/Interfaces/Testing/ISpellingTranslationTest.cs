@@ -5,6 +5,8 @@ namespace BLL.Interfaces.Testing
 {
     public interface ISpellingTranslationTest
     {
-        Task<IWordTest> GetPartOfTest(TestParameters testParameters);
+        Task<TestParameters> StartTest(int dictionaryId);
+        Task<ParamsForTranslateQuestion> GetPartOfTest(TestParameters testParameters);
+        Task<ParamsForCheck> CheckQuestion(ParamsForAnswer answerParameters);
     }
 }

@@ -48,15 +48,15 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "46c02c43-3fc8-4008-b569-13d6ee2f2dec",
-                            ConcurrencyStamp = "cc004edd-28de-4524-a487-b216332f8501",
+                            Id = "3f183f84-82e5-4c42-8c79-b391e6127e5c",
+                            ConcurrencyStamp = "797dd32d-b444-4d2f-95ad-9a4b64041b0f",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "bd725e02-a878-49ee-90a2-8425bb15b044",
-                            ConcurrencyStamp = "6f021191-aedf-4459-aa29-f72f73a64a23",
+                            Id = "dda23481-1e77-45d9-8b2e-aea3649bae76",
+                            ConcurrencyStamp = "5b726df2-1d7c-4292-806a-83b2d72b20e0",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -211,6 +211,42 @@ namespace DAL.Migrations
                     b.ToTable("EnglishDictionaryTag");
                 });
 
+            modelBuilder.Entity("Models.Entities.ResultForMatchingTest", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("EnglishDictionaryId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Score")
+                        .HasColumnType("float");
+
+                    b.HasKey("UserId", "EnglishDictionaryId");
+
+                    b.HasIndex("EnglishDictionaryId");
+
+                    b.ToTable("ResultForMatchingTests");
+                });
+
+            modelBuilder.Entity("Models.Entities.ResultForSpellingTest", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("EnglishDictionaryId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Score")
+                        .HasColumnType("float");
+
+                    b.HasKey("UserId", "EnglishDictionaryId");
+
+                    b.HasIndex("EnglishDictionaryId");
+
+                    b.ToTable("ResultForSpellingTests");
+                });
+
             modelBuilder.Entity("Models.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -245,24 +281,6 @@ namespace DAL.Migrations
                             Description = "An office is a space where an organization's employees perform administrative work in order to support and realize objects and goals of the organization.",
                             Name = "Office"
                         });
-                });
-
-            modelBuilder.Entity("Models.Entities.TestResult", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EnglishDictionaryId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Score")
-                        .HasColumnType("float");
-
-                    b.HasKey("UserId", "EnglishDictionaryId");
-
-                    b.HasIndex("EnglishDictionaryId");
-
-                    b.ToTable("TestResults");
                 });
 
             modelBuilder.Entity("Models.Entities.TranslatedWord", b =>
@@ -464,16 +482,35 @@ namespace DAL.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("Models.Entities.TestResult", b =>
+            modelBuilder.Entity("Models.Entities.ResultForMatchingTest", b =>
                 {
                     b.HasOne("Models.Entities.EnglishDictionary", "EnglishDictionary")
-                        .WithMany("TestResults")
+                        .WithMany("MatchingTestResults")
                         .HasForeignKey("EnglishDictionaryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Models.Entities.User", "User")
-                        .WithMany("TestResults")
+                        .WithMany("MatchingTestResults")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EnglishDictionary");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Models.Entities.ResultForSpellingTest", b =>
+                {
+                    b.HasOne("Models.Entities.EnglishDictionary", "EnglishDictionary")
+                        .WithMany("SpellingTestResults")
+                        .HasForeignKey("EnglishDictionaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Entities.User", "User")
+                        .WithMany("SpellingTestResults")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -507,9 +544,11 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Models.Entities.EnglishDictionary", b =>
                 {
-                    b.Navigation("Tags");
+                    b.Navigation("MatchingTestResults");
 
-                    b.Navigation("TestResults");
+                    b.Navigation("SpellingTestResults");
+
+                    b.Navigation("Tags");
 
                     b.Navigation("Words");
                 });
@@ -523,7 +562,9 @@ namespace DAL.Migrations
                 {
                     b.Navigation("EnglishDictionaries");
 
-                    b.Navigation("TestResults");
+                    b.Navigation("MatchingTestResults");
+
+                    b.Navigation("SpellingTestResults");
                 });
 
             modelBuilder.Entity("Models.Entities.Word", b =>

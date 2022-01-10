@@ -6,6 +6,7 @@ namespace Models.Entities
     public class User : IdentityUser
     {
         public ICollection<EnglishDictionary> EnglishDictionaries { get; set; } = new List<EnglishDictionary>();
-        public ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
+        public ICollection<ResultForSpellingTest> SpellingTestResults { get; set; } = new List<ResultForSpellingTest>();
+        public ICollection<ResultForMatchingTest> MatchingTestResults { get; set; } = new List<ResultForMatchingTest>();
     }
 }

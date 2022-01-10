@@ -13,9 +13,10 @@ namespace DAL
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TranslatedWord> TranslatedWords { get; set; }
         public DbSet<Word> Words { get; set; }
-        public DbSet<TestResult> TestResults { get; set; }
+        public DbSet<ResultForSpellingTest> ResultForSpellingTests { get; set; }
+        public DbSet<ResultForMatchingTest> ResultForMatchingTests { get; set; }
 
-		protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			base.OnModelCreating(modelBuilder);
 
@@ -23,7 +24,8 @@ namespace DAL
             modelBuilder.ApplyConfiguration(new EnglishDictionaryTagConfig());
             modelBuilder.ApplyConfiguration(new RoleConfig());
             modelBuilder.ApplyConfiguration(new TagConfig());
-            modelBuilder.ApplyConfiguration(new TestResultConfig());
+            modelBuilder.ApplyConfiguration(new ResultForMatchingTestConfig());
+            modelBuilder.ApplyConfiguration(new ResultForSpellingTestConfig());
             modelBuilder.ApplyConfiguration(new TranslatedWordConfig());
             modelBuilder.ApplyConfiguration(new WordConfig());
         }

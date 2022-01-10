@@ -83,6 +83,7 @@ namespace EnglishApi
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGenerateWordService, GenerateWordService>();
+            services.AddScoped(typeof(IBaseGenaricService<>), typeof(BaseGenaricService<>));
 
             //Http Services
             services.AddScoped<IHttpPhotoApiService, HttpPhotoApiService>();
@@ -100,7 +101,8 @@ namespace EnglishApi
                                    typeof(TranslatedWordProfile),
                                    typeof(UserProfile),
                                    typeof(WordProfile),
-                                   typeof(TestResultProfile));
+                                   typeof(TestResultProfile),
+                                   typeof(TestParametersProfile));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
