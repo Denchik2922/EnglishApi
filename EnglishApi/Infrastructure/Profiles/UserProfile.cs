@@ -9,10 +9,11 @@ namespace EnglishApi.Infrastructure.Profiles
 	{
 		public UserProfile()
 		{
-			CreateMap<User, UserDto>()
-				.ForMember(userDto => userDto.DictionaryMatchingTests, user => user.MapFrom(u => u.MatchingTestResults.Select(t => t.EnglishDictionary)))
-				.ForMember(userDto => userDto.DictionarySpellingTests, user => user.MapFrom(u => u.SpellingTestResults.Select(t => t.EnglishDictionary)));
+			CreateMap<User, UserDetailsDto>()
+				.ForMember(userDto => userDto.DictionaryMatchingTests, user => user.MapFrom(u => u.MatchingTestResults))
+				.ForMember(userDto => userDto.DictionarySpellingTests, user => user.MapFrom(u => u.SpellingTestResults));
 			CreateMap<UserDto, User>();
+			CreateMap<User, UserDto>();
 			CreateMap<User, UserTestDto>();
 		}
 	}

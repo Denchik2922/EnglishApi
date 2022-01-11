@@ -5,7 +5,6 @@ using EnglishApi.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Models.Tests;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace EnglishApi.Controllers
@@ -48,8 +47,6 @@ namespace EnglishApi.Controllers
             var test = await _matchingTest.CheckQuestion(testParameters);
             return Ok(test);
         }
-
-
 
         [HttpPost]
         [Route("finish-test")]

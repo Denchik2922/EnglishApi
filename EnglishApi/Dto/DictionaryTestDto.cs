@@ -2,7 +2,7 @@
 {
     public class DictionaryTestDto
     {
-        public int Id { get; set; }
+        public int EnglishDictionaryId { get; set; }
         public double Score { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using BLL.Services.Testing;
 using DAL;
 using EnglishApi.Infrastructure.Profiles;
 using EnglishApi.Middleware;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -15,11 +16,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Models.Entities;
 using Serilog;
 using System;
 using System.Linq;
+using System.Text;
 
 namespace EnglishApi
 {
@@ -74,6 +77,28 @@ namespace EnglishApi
             {
                 options.User.RequireUniqueEmail = true;
             });
+
+            //Configure jwt authentication
+            var secret = Configuration.GetSection("JwtSettings")["Secret"];
+
+            var key = Encoding.ASCII.GetBytes(secret);
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+           .AddJwtBearer(x =>
+           {
+               x.RequireHttpsMetadata = false;
+               x.SaveToken = true;
+               x.TokenValidationParameters = new TokenValidationParameters
+               {
+                   ValidateIssuerSigningKey = true,
+                   IssuerSigningKey = new SymmetricSecurityKey(key),
+                   ValidateIssuer = false,
+                   ValidateAudience = false
+               };
+           });
 
             //Entity Services
             services.AddScoped<ITagService, TagService>();

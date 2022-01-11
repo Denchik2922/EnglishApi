@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using BLL.Interfaces.Entities;
 using EnglishApi.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Models.Entities;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EnglishApi.Controllers
@@ -15,19 +16,30 @@ namespace EnglishApi.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IDictionaryService _dictionaryService;
-        private readonly ILogger<DictionaryController> _logger;
 
-        public DictionaryController(IDictionaryService dictionaryService, IMapper mapper, ILogger<DictionaryController> logger)
+        public DictionaryController(IDictionaryService dictionaryService, IMapper mapper)
         {
             _dictionaryService = dictionaryService;
             _mapper = mapper;
-            _logger = logger;
         }
 
         [HttpGet]
-        public async Task<ActionResult<ICollection<DictionaryDto>>> GetAll()
+        [Route("public-dictionaries")]
+        [Authorize]
+        public async Task<ActionResult<ICollection<DictionaryDto>>> GetPublicDictionaries()
         {
-            var dictionaries = await _dictionaryService.GetAllAsync();
+            var dictionaries = await _dictionaryService.GetAllPublicDictionariesAsync();
+            ICollection<DictionaryDto> dictionariesDto = _mapper.Map<ICollection<DictionaryDto>>(dictionaries);
+            return Ok(dictionariesDto);
+        }
+
+        [HttpGet]
+        [Route("private-dictionaries")]
+        [Authorize]
+        public async Task<ActionResult<ICollection<DictionaryDto>>> GetPrivateDictionaries()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var dictionaries = await _dictionaryService.GetAllPrivateDictionariesAsync(userId);
             ICollection<DictionaryDto> dictionariesDto = _mapper.Map<ICollection<DictionaryDto>>(dictionaries);
             return Ok(dictionariesDto);
         }
@@ -35,18 +47,21 @@ namespace EnglishApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<DictionaryDetailsDto>> GetById(int id)
         {
-            var dictionary = await _dictionaryService.GetByIdAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var dictionary = await _dictionaryService.GetDictionaryForUserAsync(id, userId);
             DictionaryDetailsDto dictionaryDto = _mapper.Map<DictionaryDetailsDto>(dictionary);
             return Ok(dictionaryDto);
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult> Add(DictionaryDto dictionaryDto)
         {
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
             if (ModelState.IsValid)
             {
                 var dictionary = _mapper.Map<EnglishDictionary>(dictionaryDto);
-                await _dictionaryService.AddAsync(dictionary);
+                await _dictionaryService.AddAsync(dictionary, userRole);
                 return Ok();
             }
             return BadRequest(ModelState);
@@ -60,12 +75,14 @@ namespace EnglishApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<ActionResult> Update(DictionaryDto dictionaryDto)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (ModelState.IsValid)
             {
                 var dictionary = _mapper.Map<EnglishDictionary>(dictionaryDto);
-                await _dictionaryService.UpdateAsync(dictionary);
+                await _dictionaryService.UpdateAsync(dictionary, userId);
                 return Ok();
             }
             return BadRequest(ModelState);

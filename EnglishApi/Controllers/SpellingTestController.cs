@@ -5,8 +5,8 @@ using EnglishApi.Dto;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Models.Tests;
-using Newtonsoft.Json;
 using System.Threading.Tasks;
+
 namespace EnglishApi.Controllers
 {
     [Route("api/[controller]")]

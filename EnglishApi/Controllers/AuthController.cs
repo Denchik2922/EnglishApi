@@ -29,9 +29,32 @@ namespace EnglishApi.Controllers
                 return ValidationProblem();
             }
             var user = _mapper.Map<User>(userModel);
-
             await _authService.Register(user, userModel.Password);
+            return Ok();
+        }
 
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> Authenticate([FromBody] UserLoginDto model)
+        {
+            var user = await _authService.Authenticate(model.Username, model.Password);
+            return Ok(new { access_token = user });
+        }
+
+
+        [Authorize]
+        [HttpPost("changePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] UserChangePasswordDto model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ValidationProblem();
+            }
+            var result = await _authService.ChangePassword(model.UserId, model.OldPassword, model.NewPassword);
+            if (!result)
+            {
+                return StatusCode(500);
+            }
             return Ok();
         }
     }
