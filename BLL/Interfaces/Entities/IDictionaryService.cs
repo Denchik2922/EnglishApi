@@ -11,5 +11,6 @@ namespace BLL.Interfaces.Entities
         Task<EnglishDictionary> GetDictionaryForUserAsync(int id, string userId);
         Task UpdateAsync(EnglishDictionary entity, string userId);
         Task AddAsync(EnglishDictionary entity, string role);
+        Task DeleteAsync(int id, string userId);
     }
 }

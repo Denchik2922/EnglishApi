@@ -16,7 +16,7 @@ namespace BLL.Tests.Services
             _fixture = fixture;
         }
 
-        [Fact]
+       /* [Fact]
         public async Task Should_Return_All_Users()
         {
             //arrange
@@ -27,6 +27,6 @@ namespace BLL.Tests.Services
 
             //assert
             Assert.Equal(1, response.Count);
-        }
+        }*/
     }
 }

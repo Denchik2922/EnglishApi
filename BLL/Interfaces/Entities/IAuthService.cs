@@ -7,6 +7,7 @@ namespace BLL.Interfaces.Entities
     {
         Task Register(User user, string password);
         Task<bool> ChangePassword(string UserId, string OldPassword, string NewPassword);
-        Task<string> Authenticate(string username, string password);
+        Task<UserToken> Authenticate(string username, string password);
+        Task<UserToken> RefreshAuth(UserToken userToke);
     }
 }

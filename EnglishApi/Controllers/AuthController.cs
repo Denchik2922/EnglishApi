@@ -37,10 +37,18 @@ namespace EnglishApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Authenticate([FromBody] UserLoginDto model)
         {
-            var user = await _authService.Authenticate(model.Username, model.Password);
-            return Ok(new { access_token = user });
+            var token = await _authService.Authenticate(model.Username, model.Password);
+            return Ok(token);
         }
 
+
+        [HttpPost]
+        [Route("refresh")]
+        public async Task<IActionResult> Refresh(UserToken tokenDto)
+        {
+            var token = await _authService.RefreshAuth(tokenDto);
+            return Ok(token);
+        }
 
         [Authorize]
         [HttpPost("changePassword")]

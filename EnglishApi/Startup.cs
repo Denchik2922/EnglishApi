@@ -79,26 +79,25 @@ namespace EnglishApi
             });
 
             //Configure jwt authentication
-            var secret = Configuration.GetSection("JwtSettings")["Secret"];
-
-            var key = Encoding.ASCII.GetBytes(secret);
-            services.AddAuthentication(x =>
+            var jwtSettings = Configuration.GetSection("JWTSettings");
+            services.AddAuthentication(opt =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-           .AddJwtBearer(x =>
-           {
-               x.RequireHttpsMetadata = false;
-               x.SaveToken = true;
-               x.TokenValidationParameters = new TokenValidationParameters
-               {
-                   ValidateIssuerSigningKey = true,
-                   IssuerSigningKey = new SymmetricSecurityKey(key),
-                   ValidateIssuer = false,
-                   ValidateAudience = false
-               };
-           });
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidIssuer = jwtSettings["validIssuer"],
+                    ValidAudience = jwtSettings["validAudience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]))
+                };
+            });
 
             //Entity Services
             services.AddScoped<ITagService, TagService>();
@@ -109,6 +108,7 @@ namespace EnglishApi
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGenerateWordService, GenerateWordService>();
             services.AddScoped(typeof(IBaseGenaricService<>), typeof(BaseGenaricService<>));
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             //Http Services
             services.AddScoped<IHttpPhotoApiService, HttpPhotoApiService>();
@@ -128,6 +128,8 @@ namespace EnglishApi
                                    typeof(WordProfile),
                                    typeof(TestResultProfile),
                                    typeof(TestParametersProfile));
+
+            services.AddCors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -150,6 +152,11 @@ namespace EnglishApi
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            
+            app.UseCors(builder => builder.WithOrigins("https://localhost:5011")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {

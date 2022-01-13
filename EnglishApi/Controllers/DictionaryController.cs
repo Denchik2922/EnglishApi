@@ -24,8 +24,16 @@ namespace EnglishApi.Controllers
         }
 
         [HttpGet]
-        [Route("public-dictionaries")]
         [Authorize]
+        public async Task<ActionResult<ICollection<DictionaryDto>>> GetAllDictionaries()
+        {
+            var dictionaries = await _dictionaryService.GetAllAsync();
+            ICollection<DictionaryDto> dictionariesDto = _mapper.Map<ICollection<DictionaryDto>>(dictionaries);
+            return Ok(dictionariesDto);
+        }
+
+        [HttpGet]
+        [Route("public-dictionaries")]
         public async Task<ActionResult<ICollection<DictionaryDto>>> GetPublicDictionaries()
         {
             var dictionaries = await _dictionaryService.GetAllPublicDictionariesAsync();
@@ -70,7 +78,8 @@ namespace EnglishApi.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
-            await _dictionaryService.DeleteAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _dictionaryService.DeleteAsync(id, userId);
             return Ok();
         }
 

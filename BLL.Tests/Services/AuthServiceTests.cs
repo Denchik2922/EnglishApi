@@ -14,7 +14,7 @@ namespace BLL.Tests.Services
             _fixture = fixture;
         }
 
-        [Fact]
+       /* [Fact]
         public async Task Should_Register_User()
         {
             //arrange
@@ -35,6 +35,6 @@ namespace BLL.Tests.Services
             Assert.Equal(user.Id, response.Id);
             Assert.Equal(user.UserName, response.UserName);
             Assert.Equal(user.Email, response.Email);
-        }
+        }*/
     }
 }

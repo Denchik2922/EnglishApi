@@ -16,13 +16,13 @@ namespace BLL.Services.Entities
 {
     public class AuthService : IAuthService
     {
-        private readonly string _secret;
         private readonly UserManager<User> _userManager;
+        private readonly IJwtTokenService _tokenService;
 
-        public AuthService(UserManager<User> userManager, IConfiguration config)
+        public AuthService(UserManager<User> userManager, IJwtTokenService tokenService)
         {
-            _secret = config.GetSection("JwtSettings")["Secret"];
             _userManager = userManager;
+            _tokenService = tokenService;
         }
 
         public async Task Register(User user, string password)
@@ -59,9 +59,27 @@ namespace BLL.Services.Entities
             }
             return result.Succeeded;
         }
-  
 
-        public async Task<string> Authenticate(string username, string password)
+        public async Task<UserToken> RefreshAuth(UserToken userToken)
+        {
+            var principal = _tokenService.GetPrincipalFromExpiredToken(userToken.Token);
+            var username = principal.Identity.Name;
+
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null || 
+                user.RefreshToken != userToken.RefreshToken ||
+                user.RefreshTokenExpiryTime <= DateTime.Now)
+            {
+                throw new Exception("Invalid client request");
+            }
+
+            var token = await _tokenService.GetToken(user);
+            user.RefreshToken = _tokenService.GenerateRefreshToken();
+            await _userManager.UpdateAsync(user);
+            return new UserToken { Token = token, RefreshToken = user.RefreshToken };
+        }
+
+        public async Task<UserToken> Authenticate(string username, string password)
         {
             var user = await _userManager.FindByNameAsync(username);
             if (user == null)
@@ -71,34 +89,16 @@ namespace BLL.Services.Entities
 
             if (await _userManager.CheckPasswordAsync(user, password))
             {
-                IList<string> roles = await _userManager.GetRolesAsync(user);
-                string token = GenerateJwtToken(user, roles);
-                return token;
+                var token = await _tokenService.GetToken(user);
+                user.RefreshToken = _tokenService.GenerateRefreshToken();
+                user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+                await _userManager.UpdateAsync(user);
+                return new UserToken { Token = token, RefreshToken = user.RefreshToken };
             }
             else
             {
                 throw new CheckUserPasswordException($"Password does not match the user {typeof(User).Name} with name {username}");
             }
-        }
-
-        private string GenerateJwtToken(User user, IList<string> roles)
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var key = Encoding.ASCII.GetBytes(_secret);
-
-            List<Claim> claims = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToList();
-            claims.Add(new Claim(ClaimTypes.Name, user.UserName));
-            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddMinutes(10),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
     }
 }
