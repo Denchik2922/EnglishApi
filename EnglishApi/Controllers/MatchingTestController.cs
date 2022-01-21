@@ -2,6 +2,7 @@
 using BLL.Interfaces.Entities;
 using BLL.Interfaces.Testing;
 using EnglishApi.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Models.Tests;
@@ -11,6 +12,7 @@ namespace EnglishApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class MatchingTestController : ControllerBase
     {
         private readonly IMatchingWordTest _matchingTest;

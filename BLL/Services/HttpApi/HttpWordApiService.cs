@@ -22,7 +22,14 @@ namespace BLL.Services.HttpApi
             using (var responce = await httpClient.GetAsync(word,
                 HttpCompletionOption.ResponseHeadersRead))
             {
-                responce.EnsureSuccessStatusCode();
+                try
+                {
+                    responce.EnsureSuccessStatusCode();
+                }
+                catch(HttpRequestException e)
+                {
+                    throw;
+                }
                 var content = await responce.Content.ReadAsStringAsync();
                 
                 var arrObject = JArray.Parse(content);

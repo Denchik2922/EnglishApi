@@ -8,9 +8,6 @@ namespace BLL.Interfaces.Entities
     {
         Task<ICollection<EnglishDictionary>> GetAllPublicDictionariesAsync();
         Task<ICollection<EnglishDictionary>> GetAllPrivateDictionariesAsync(string userId);
-        Task<EnglishDictionary> GetDictionaryForUserAsync(int id, string userId);
-        Task UpdateAsync(EnglishDictionary entity, string userId);
-        Task AddAsync(EnglishDictionary entity, string role);
-        Task DeleteAsync(int id, string userId);
+        Task<EnglishDictionary> GetByIdIncludeAsync(int id);
     }
 }

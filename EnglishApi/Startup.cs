@@ -5,9 +5,11 @@ using BLL.Services.Entities;
 using BLL.Services.HttpApi;
 using BLL.Services.Testing;
 using DAL;
+using EnglishApi.Infrastructure.AuthorizationHandlers;
 using EnglishApi.Infrastructure.Profiles;
 using EnglishApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -38,10 +40,18 @@ namespace EnglishApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnglishApi", Version = "v1" });
+            });
+
             //Http Clients
             services.AddHttpClient("WordInfoClient", config =>
             {
                 config.BaseAddress = new Uri(Configuration.GetSection("EnglishWordApiOptions")["Url"]);
+                config.Timeout = TimeSpan.FromSeconds(5);
             });
 
             var translateApiOpt = Configuration.GetSection("TranslateApiOptions");
@@ -55,14 +65,6 @@ namespace EnglishApi
             services.AddHttpClient("PhotoApiClient", config =>
             {
                 config.BaseAddress = new Uri(Configuration.GetSection("PhotoApiOptions")["Url"]);
-            });
-
-
-            services.AddControllers();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnglishApi", Version = "v1" });
             });
 
             //Db connection
@@ -98,6 +100,19 @@ namespace EnglishApi
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]))
                 };
             });
+
+            //Configure authorization
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("GetDictionaryPolicy", policy =>
+                    policy.Requirements.Add(new DictionaryGetRequirement()));
+                options.AddPolicy("EditDictionaryPolicy", policy =>
+                    policy.Requirements.Add(new DictionaryEditRequirement()));
+            });
+
+            //AuthorizationHandlers
+            services.AddSingleton<IAuthorizationHandler, DictionaryGetHandler>();
+            services.AddSingleton<IAuthorizationHandler, DictionaryEditHandler>();
 
             //Entity Services
             services.AddScoped<ITagService, TagService>();

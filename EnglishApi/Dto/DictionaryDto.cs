@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using EnglishApi.Infrastructure.Validations;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace EnglishApi.Dto
@@ -17,6 +18,7 @@ namespace EnglishApi.Dto
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Tags is required")]
+        [EnsureMinimumElements(1, ErrorMessage = "At least a Tags is required")]
         public ICollection<TagDto> Tags { get; set; }
 
         [Required(ErrorMessage = "User id is required")]

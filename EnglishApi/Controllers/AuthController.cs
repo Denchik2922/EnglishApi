@@ -24,6 +24,10 @@ namespace EnglishApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterDto userModel)
         {
+            if(userModel == null)
+            {
+                return BadRequest("UserRegister object is null");
+            }
             if (!ModelState.IsValid)
             {
                 return ValidationProblem();
@@ -37,15 +41,24 @@ namespace EnglishApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Authenticate([FromBody] UserLoginDto model)
         {
+            if (model == null)
+            {
+                return BadRequest("UserLogin object is null");
+            }
             var token = await _authService.Authenticate(model.Username, model.Password);
             return Ok(token);
         }
 
 
         [HttpPost]
+        [AllowAnonymous]
         [Route("refresh")]
         public async Task<IActionResult> Refresh(UserToken tokenDto)
         {
+            if (tokenDto == null)
+            {
+                return BadRequest("UserToken object is null");
+            }
             var token = await _authService.RefreshAuth(tokenDto);
             return Ok(token);
         }

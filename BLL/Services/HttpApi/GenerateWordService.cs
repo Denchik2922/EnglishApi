@@ -20,10 +20,13 @@ namespace BLL.Services.HttpApi
         public async Task<WordInformation> GenerateInfoByWord(string wordName)
         {
             var phonetic = await _wordApi.GetPhoneticByWord(wordName);
+            var photos = await _photoApi.GetPhotosByWord(wordName);
+            var translate = await _translateApi.GetTranslatedWord(wordName);
+
             return new WordInformation()
             {
-                PictureUrls = await _photoApi.GetPhotosByWord(wordName),
-                Translate = await _translateApi.GetTranslatedWord(wordName),
+                PictureUrls = photos,
+                Translate = translate,
                 Transcription = phonetic.Text,
                 AudioUrl = phonetic.Audio
             };

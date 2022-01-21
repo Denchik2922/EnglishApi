@@ -2,6 +2,7 @@
 using BLL.Interfaces.Entities;
 using BLL.Interfaces.HttpApi;
 using EnglishApi.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using System.Collections.Generic;
@@ -11,19 +12,29 @@ namespace EnglishApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class WordController : ControllerBase
     {
         private readonly IMapper _mapper;
         private readonly IWordService _wordService;
         private readonly IGenerateWordService _generateWordService;
-        public WordController(IWordService wordService, IMapper mapper, IGenerateWordService generateWordService)
+        private readonly IHttpPhotoApiService _photoApi;
+        private readonly IAuthorizationService _authorizationService;
+        private readonly IDictionaryService _dictionaryService;
+        public WordController(IWordService wordService, IHttpPhotoApiService photoApi,
+                              IMapper mapper, IGenerateWordService generateWordService,
+                              IAuthorizationService authorizationService, IDictionaryService dictionaryService)
         {
+            _authorizationService = authorizationService;
+            _photoApi = photoApi;
             _wordService = wordService;
             _mapper = mapper;
+            _dictionaryService = dictionaryService;
             _generateWordService = generateWordService;
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ICollection<WordDto>>> GetAll()
         {
             var words = await _wordService.GetAllAsync();
@@ -35,8 +46,17 @@ namespace EnglishApi.Controllers
         public async Task<ActionResult<WordDto>> GetById(int id)
         {
             var word = await _wordService.GetByIdAsync(id);
-            WordDto wordDto = _mapper.Map<WordDto>(word);
-            return Ok(wordDto);
+            var authorizationResult = await _authorizationService
+                    .AuthorizeAsync(User, word.Dictionary, "EditDictionaryPolicy");
+            if (authorizationResult.Succeeded)
+            {
+                WordDto wordDto = _mapper.Map<WordDto>(word);
+                return Ok(wordDto);
+            }
+            else
+            {
+                return new ForbidResult();
+            }
         }
 
         [HttpPost]
@@ -45,25 +65,62 @@ namespace EnglishApi.Controllers
             if (ModelState.IsValid)
             {
                 var word = _mapper.Map<Word>(wordDto);
-                await _wordService.AddAsync(word);
-                return Ok();
+                var dictionary = await _dictionaryService.GetByIdAsync(word.EnglishDictionaryId);
+                var authorizationResult = await _authorizationService
+                    .AuthorizeAsync(User, dictionary, "EditDictionaryPolicy");
+                if (authorizationResult.Succeeded)
+                {
+                    await _wordService.AddAsync(word);
+                    return Ok();
+                }
+                else
+                {
+                    return new ForbidResult();
+                }
             }
-            return BadRequest(ModelState);
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
-        [HttpPost]
-        [Route("generate-word")]
+        [HttpGet("generate-word/{wordName}")]
         public async Task<ActionResult> GenerateWord(string wordName)
         {
+            if (string.IsNullOrEmpty(wordName))
+            {
+                return BadRequest("Word name is null");
+            }
             var word = await _generateWordService.GenerateInfoByWord(wordName);
             return Ok(word);
+        }
+
+        [HttpGet("word-pictures/{wordName}")]
+        public async Task<ActionResult> GetWordPictures(string wordName)
+        {
+            if (string.IsNullOrEmpty(wordName))
+            {
+                return BadRequest("Word name is null");
+            }
+            var photos = await _photoApi.GetPhotosByWord(wordName);
+            return Ok(photos);
         }
 
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
-            await _wordService.DeleteAsync(id);
-            return Ok();
+            var word = await _wordService.GetByIdAsync(id);
+            var authorizationResult = await _authorizationService
+                    .AuthorizeAsync(User, word.Dictionary, "EditDictionaryPolicy");
+            if (authorizationResult.Succeeded)
+            {
+                await _wordService.DeleteAsync(id);
+                return Ok();
+            }
+            else
+            {
+                return new ForbidResult();
+            }
         }
 
         [HttpPut]
@@ -72,10 +129,23 @@ namespace EnglishApi.Controllers
             if (ModelState.IsValid)
             {
                 var word = _mapper.Map<Word>(wordDto);
-                await _wordService.UpdateAsync(word);
-                return Ok();
+                var dictionary = _dictionaryService.GetByIdAsync(word.EnglishDictionaryId);
+                var authorizationResult = await _authorizationService
+                    .AuthorizeAsync(User, dictionary, "EditDictionaryPolicy");
+                if (authorizationResult.Succeeded)
+                {
+                    await _wordService.UpdateAsync(word);
+                    return Ok();
+                }
+                else
+                {
+                    return new ForbidResult();
+                }
             }
-            return BadRequest(ModelState);
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
     }
 }

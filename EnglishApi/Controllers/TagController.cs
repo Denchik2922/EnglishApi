@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BLL.Interfaces.Entities;
 using EnglishApi.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace EnglishApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TagController : ControllerBase
     {
         private readonly IMapper _mapper;
@@ -45,7 +47,11 @@ namespace EnglishApi.Controllers
                 await _tagService.AddAsync(tag);
                 return Ok();
             }
-            return BadRequest(ModelState);
+            else
+            {
+                return BadRequest(ModelState);
+            }
+
         }
 
         [HttpDelete]
@@ -64,7 +70,10 @@ namespace EnglishApi.Controllers
                 await _tagService.UpdateAsync(tag);
                 return Ok();
             }
-            return BadRequest(ModelState);
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
     }
 }
