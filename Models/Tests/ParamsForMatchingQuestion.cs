@@ -1,7 +1,11 @@
-﻿namespace Models.Tests
+﻿using System.Collections.Generic;
+
+namespace Models.Tests
 {
-    public class ParamsForMatchingQuestion : TestParameters
+    public class ParamsForMatchingQuestion
     {
-        public MatchingTest Question { get; set; }
+        public TestParameters Parameters { get; set; }
+        public ICollection<string> Translates { get; set; }
+        public string WordName { get; set; }
     }
 }

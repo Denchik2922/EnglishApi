@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Models.Entities
+﻿namespace Models.Entities
 {
-    public class ResultForMatchingTest
+    public class ResultForMatchingTest : IResultTest
     {
         public int EnglishDictionaryId { get; set; }
         public EnglishDictionary EnglishDictionary { get; set; }

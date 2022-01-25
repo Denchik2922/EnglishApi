@@ -42,19 +42,11 @@ namespace BLL.Services.Testing
         public async Task<ParamsForTranslateQuestion> GetPartOfTest(TestParameters param)
         {
             var translate = await GetTranslate(param.DictionaryId, param.CurrentQuestion, param.CountWord);
-            
-            TranslateQuestion wordForTest = new TranslateQuestion()
-            {
-                WordName = translate.Name,
-            };
-
             var paramQuestion = new ParamsForTranslateQuestion()
             {
-                Question = wordForTest
+                Parameters = param,
+                WordName = translate.Name
             };
-
-            _mapper.Map(param, paramQuestion);
-
             return paramQuestion;
         }
 
@@ -78,23 +70,24 @@ namespace BLL.Services.Testing
         {
             var translatedWord = await _context.TranslatedWords
                 .Include(t => t.Word)
-                .FirstOrDefaultAsync(t => t.Name.ToLower().Contains(answerParameters.UserAnswer.Question));
+                .FirstOrDefaultAsync(t => t.Name.ToLower().Contains(answerParameters.Question.ToLower()));
             if (translatedWord == null)
             {
-                throw new ItemNotFoundException($"{typeof(TranslatedWord).Name} with name {answerParameters.UserAnswer.Question} not found");
+                throw new ItemNotFoundException($"{typeof(TranslatedWord).Name} with name {answerParameters.Question} not found");
             }
-            var currentWord = translatedWord.Word.Name;
 
+            var currentWord = translatedWord.Word.Name.ToLower();
             var paramCheck = new ParamsForCheck();
-            _mapper.Map(answerParameters, paramCheck);
+            paramCheck.Parameters = answerParameters.Parameters;
 
-            if (currentWord.Contains(answerParameters.UserAnswer.Answer))
+            if (currentWord.Contains(answerParameters.Answer.ToLower()))
             {
                 paramCheck.IsTrueAnswer = true;
-                paramCheck.Score++;
+                paramCheck.Parameters.Score++;
                 paramCheck.TrueAnswer = currentWord;
-             } 
+            } 
             paramCheck.TrueAnswer = currentWord;
+
             return paramCheck;
         }
 

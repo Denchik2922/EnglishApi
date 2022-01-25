@@ -45,20 +45,12 @@ namespace BLL.Services.Testing
         {
             var word = await GetWord(param.DictionaryId, param.CurrentQuestion, param.CountWord);
             var translates = await GetTranslates(word.Id, param.DictionaryId, word.Translates);
-
-            var wordForTest = new MatchingTest()
+            var paramQuestion = new ParamsForMatchingQuestion()
             {
+                Parameters = param,
                 WordName = word.Name,
                 Translates = translates
             };
-
-            var paramQuestion = new ParamsForMatchingQuestion()
-            {
-                Question = wordForTest
-            };
-
-            _mapper.Map(param, paramQuestion);
-
             return paramQuestion;
         }
 
@@ -110,20 +102,20 @@ namespace BLL.Services.Testing
         {
             var word = await _context.Words
                 .Include(w => w.Translates)
-                .FirstOrDefaultAsync(w => w.Name.ToLower().Contains(answerParameters.UserAnswer.Question.ToLower()));
+                .FirstOrDefaultAsync(w => w.Name.ToLower().Contains(answerParameters.Question.ToLower()));
             if (word == null)
             {
-                throw new ItemNotFoundException($"{typeof(Word).Name} with name {answerParameters.UserAnswer.Question} not found");
+                throw new ItemNotFoundException($"{typeof(Word).Name} with name {answerParameters.Question} not found");
             }
             var currentTranslates = word.Translates.Select(t => t.Name);
 
             var paramCheck = new ParamsForCheck();
-            _mapper.Map(answerParameters, paramCheck);
+            paramCheck.Parameters = answerParameters.Parameters;
 
-            if (currentTranslates.Contains(answerParameters.UserAnswer.Answer))
+            if (currentTranslates.Contains(answerParameters.Answer))
             {
                 paramCheck.IsTrueAnswer = true;
-                paramCheck.Score++;
+                paramCheck.Parameters.Score++;
 
             }
             paramCheck.TrueAnswer = currentTranslates.First();

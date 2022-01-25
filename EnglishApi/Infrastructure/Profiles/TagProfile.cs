@@ -9,6 +9,7 @@ namespace EnglishApi.Infrastructure.Profiles
 	{
 		public TagProfile()
 		{
+			CreateMap<Tag, Tag>();
 			CreateMap<Tag, TagDto>();
 			CreateMap<TagDto, Tag>();
 

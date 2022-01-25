@@ -1,7 +1,6 @@
 ﻿using BLL.Exceptions;
 using BLL.Interfaces.Entities;
 using DAL;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using System.Collections.Generic;
@@ -36,6 +35,7 @@ namespace BLL.Services.Entities
             {
                 throw new ItemNotFoundException($"{typeof(User).Name} with id {userId} not found");
             }
+
             return user;
         }
     }

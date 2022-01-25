@@ -129,7 +129,7 @@ namespace EnglishApi.Controllers
             if (ModelState.IsValid)
             {
                 var word = _mapper.Map<Word>(wordDto);
-                var dictionary = _dictionaryService.GetByIdAsync(word.EnglishDictionaryId);
+                var dictionary = await _dictionaryService.GetByIdAsync(word.EnglishDictionaryId);
                 var authorizationResult = await _authorizationService
                     .AuthorizeAsync(User, dictionary, "EditDictionaryPolicy");
                 if (authorizationResult.Succeeded)

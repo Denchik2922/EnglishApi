@@ -1,15 +1,8 @@
 ﻿using BLL.Exceptions;
 using BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using Models.Entities;
 using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Entities
@@ -48,6 +41,7 @@ namespace BLL.Services.Entities
             {
                 throw new ItemNotFoundException($"{typeof(User).Name} item with id {UserId} not found.");
             }
+
             IdentityResult result =
                 await _userManager.ChangePasswordAsync(user, OldPassword, NewPassword);
             if (!result.Succeeded)
@@ -57,6 +51,7 @@ namespace BLL.Services.Entities
                     throw new Exception($"Code: {error.Code}, Description: { error.Description}");
                 }
             }
+
             return result.Succeeded;
         }
 
@@ -76,6 +71,7 @@ namespace BLL.Services.Entities
             var token = await _tokenService.GetToken(user);
             user.RefreshToken = _tokenService.GenerateRefreshToken();
             await _userManager.UpdateAsync(user);
+
             return new UserToken { Token = token, RefreshToken = user.RefreshToken };
         }
 

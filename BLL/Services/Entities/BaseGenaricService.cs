@@ -10,7 +10,7 @@ namespace BLL.Services.Entities
     public class BaseGenaricService<T> : IBaseGenaricService<T> where T : class
     {
         protected readonly EnglishContext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly DbSet<T> _dbSet;
         public BaseGenaricService(EnglishContext context)
         {
             _context = context;
@@ -30,6 +30,7 @@ namespace BLL.Services.Entities
             {
                 throw new ItemNotFoundException($"{typeof(T).Name} with id {id} not found");
             }
+
             _dbSet.Remove(entity);
             await _context.SaveChangesAsync();
         }

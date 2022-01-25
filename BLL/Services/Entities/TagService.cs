@@ -1,4 +1,5 @@
-﻿using BLL.Exceptions;
+﻿using AutoMapper;
+using BLL.Exceptions;
 using BLL.Interfaces.Entities;
 using DAL;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,11 @@ namespace BLL.Services.Entities
 {
     public class TagService : BaseGenaricService<Tag>, ITagService
     {
-        public TagService(EnglishContext context) : base(context) { }
+        private readonly IMapper _mapper;
+        public TagService(EnglishContext context, IMapper mapper) : base(context) 
+        {
+            _mapper = mapper;
+        }
 
         public override async Task<Tag> GetByIdAsync(int id)
         {
@@ -24,14 +29,11 @@ namespace BLL.Services.Entities
             return tag;
         }
 
-        public override async Task UpdateAsync(Tag entity)
+        public async override Task UpdateAsync(Tag entity)
         {
-            var tag = await _context.Tags.FindAsync(entity.Id);
-            if (tag == null)
-            {
-                throw new ItemNotFoundException($"{typeof(Tag).Name} with id {entity.Id} not found");
-            }
-            await base.UpdateAsync(entity);
+            var tag = await GetByIdAsync(entity.Id);
+            _mapper.Map(entity, tag);
+            await base.UpdateAsync(tag);
         }
     }
 }

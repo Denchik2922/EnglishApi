@@ -1,6 +1,6 @@
-﻿using EnglishApi.Infrastructure.Exceptions;
+﻿using BLL.Exceptions;
+using EnglishApi.Infrastructure.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Net;
@@ -23,6 +23,11 @@ namespace EnglishApi.Middleware
             {
                 await _next(httpContext);
             }
+            catch (ItemNotFoundException ex)
+            {
+                _logger.LogError(ex, $"{ex.Message}");
+                await HandleExceptionAsync(httpContext, ex);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Something went wrong");
@@ -32,7 +37,13 @@ namespace EnglishApi.Middleware
         private async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            context.Response.StatusCode = exception switch
+            {
+                ItemNotFoundException => (int)HttpStatusCode.NotFound,
+                _ => (int)HttpStatusCode.InternalServerError
+            };
+
 
             await context.Response.WriteAsync(new ErrorDetails()
             {

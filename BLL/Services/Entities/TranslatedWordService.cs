@@ -20,6 +20,7 @@ namespace BLL.Services.Entities
             {
                 throw new ItemNotFoundException($"{typeof(TranslatedWord).Name} with id {id} not found");
             }
+
             return translate;
         }
     }

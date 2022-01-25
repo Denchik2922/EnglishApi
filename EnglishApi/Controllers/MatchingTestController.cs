@@ -18,9 +18,9 @@ namespace EnglishApi.Controllers
         private readonly IMatchingWordTest _matchingTest;
         
         private readonly IMapper _mapper;
-        private readonly IBaseGenaricService<ResultForMatchingTest> _testService;
+        private readonly ITestResultService<ResultForMatchingTest> _testService;
         public MatchingTestController(IMapper mapper,
-            IMatchingWordTest matchingTest, IBaseGenaricService<ResultForMatchingTest> testService)
+            IMatchingWordTest matchingTest, ITestResultService<ResultForMatchingTest> testService)
         {
             _matchingTest = matchingTest;
             _testService = testService;
@@ -55,7 +55,16 @@ namespace EnglishApi.Controllers
         public async Task<IActionResult> FinishTest(TestResultDto testResult)
         {
             var test = _mapper.Map<ResultForMatchingTest>(testResult);
-            await _testService.AddAsync(test);
+            var result = await _testService.GetByIdAsync(test.UserId, test.EnglishDictionaryId);
+            if(result == null)
+            {
+                await _testService.AddAsync(test);
+            }
+            else
+            {
+                result.Score = test.Score;
+                await _testService.UpdateAsync(result);
+            }
             return Ok();
         }
     }

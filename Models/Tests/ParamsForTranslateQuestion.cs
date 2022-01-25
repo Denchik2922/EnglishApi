@@ -1,7 +1,8 @@
 ﻿namespace Models.Tests
 {
-    public class ParamsForTranslateQuestion : TestParameters
+    public class ParamsForTranslateQuestion
     {
-        public TranslateQuestion Question { get; set; }
+        public TestParameters Parameters { get; set; }
+        public string WordName { get; set; }
     }
 }

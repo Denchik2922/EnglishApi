@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 namespace Models.Tests
 {
-    public class ParamsForCheck : TestParameters
+    public class ParamsForCheck
     {
+        public TestParameters Parameters { get; set; }
         public int NextQuestion
         {
             get
             {
                 if (HasNextQuestion)
                 {
-                    return CurrentQuestion + 1;
+                    return Parameters.CurrentQuestion + 1;
                 }
-                else return CurrentQuestion;
+                else return Parameters.CurrentQuestion;
             }
         }
 
-        public bool HasNextQuestion => CurrentQuestion < CountQuestion;
+        public bool HasNextQuestion => Parameters.CurrentQuestion < Parameters.CountQuestion;
         public string TrueAnswer { get; set; }
         public bool IsTrueAnswer { get; set; }
     }

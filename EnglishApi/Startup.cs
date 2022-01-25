@@ -23,7 +23,6 @@ using Microsoft.OpenApi.Models;
 using Models.Entities;
 using Serilog;
 using System;
-using System.Linq;
 using System.Text;
 
 namespace EnglishApi
@@ -123,6 +122,7 @@ namespace EnglishApi
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGenerateWordService, GenerateWordService>();
             services.AddScoped(typeof(IBaseGenaricService<>), typeof(BaseGenaricService<>));
+            services.AddScoped(typeof(ITestResultService<>), typeof(TestResultService<>));
             services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             //Http Services

@@ -8,7 +8,8 @@ namespace BLL.Tests.Infrastructure.Fixtures
         public TagService Create()
         {
             var context = new DbContextHelper().Context;
-            return new TagService(context);
+            var mapper = MapperHelper.GetInstance();
+            return new TagService(context, mapper);
         }
     }
 }

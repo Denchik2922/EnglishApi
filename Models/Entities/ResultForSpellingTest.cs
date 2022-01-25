@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Models.Entities
+﻿namespace Models.Entities
 {
-    public class ResultForSpellingTest
+    public class ResultForSpellingTest : IResultTest
     {
         public int EnglishDictionaryId { get; set; }
         public EnglishDictionary EnglishDictionary { get; set; }
