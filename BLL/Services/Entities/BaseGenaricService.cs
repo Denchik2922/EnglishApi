@@ -1,13 +1,13 @@
 ﻿using BLL.Exceptions;
 using BLL.Interfaces.Entities;
+using BLL.RequestFeatures;
 using DAL;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Entities
 {
-    public class BaseGenaricService<T> : IBaseGenaricService<T> where T : class
+    public abstract class BaseGenaricService<T> : IBaseGenaricService<T> where T : class
     {
         protected readonly EnglishContext _context;
         protected readonly DbSet<T> _dbSet;
@@ -15,6 +15,12 @@ namespace BLL.Services.Entities
         {
             _context = context;
             _dbSet = _context.Set<T>();
+        }
+
+        public virtual async Task<PagedList<T>> GetAllAsync(PaginationParameters parameters)
+        {
+            return await PagedList<T>
+                         .ToPagedList(_dbSet, parameters.PageNumber, parameters.PageSize);
         }
 
         public virtual async Task AddAsync(T entity)
@@ -43,11 +49,6 @@ namespace BLL.Services.Entities
                 throw new ItemNotFoundException($"{typeof(T).Name} with id {id} not found");
             }
             return entity;
-        }
-
-        public virtual async Task<ICollection<T>> GetAllAsync()
-        {
-            return await _dbSet.ToListAsync();
         }
 
         public virtual async Task UpdateAsync(T entity)

@@ -122,7 +122,7 @@ namespace BLL.Tests.Services
             var tag = await service.GetByIdAsync(tagId);
             tag.Name = "Tag 2";
             tag.Description = "Tag Desk 2";
-  
+
             //act
             await service.UpdateAsync(tag);
             var response = await service.GetByIdAsync(tagId);

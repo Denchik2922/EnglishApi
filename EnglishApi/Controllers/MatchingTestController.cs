@@ -16,7 +16,7 @@ namespace EnglishApi.Controllers
     public class MatchingTestController : ControllerBase
     {
         private readonly IMatchingWordTest _matchingTest;
-        
+
         private readonly IMapper _mapper;
         private readonly ITestResultService<ResultForMatchingTest> _testService;
         public MatchingTestController(IMapper mapper,
@@ -56,7 +56,7 @@ namespace EnglishApi.Controllers
         {
             var test = _mapper.Map<ResultForMatchingTest>(testResult);
             var result = await _testService.GetByIdAsync(test.UserId, test.EnglishDictionaryId);
-            if(result == null)
+            if (result == null)
             {
                 await _testService.AddAsync(test);
             }

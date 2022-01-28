@@ -4,6 +4,7 @@ using BLL.Interfaces.Entities;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Entities
@@ -11,9 +12,14 @@ namespace BLL.Services.Entities
     public class TagService : BaseGenaricService<Tag>, ITagService
     {
         private readonly IMapper _mapper;
-        public TagService(EnglishContext context, IMapper mapper) : base(context) 
+        public TagService(EnglishContext context, IMapper mapper) : base(context)
         {
             _mapper = mapper;
+        }
+
+        public async Task<ICollection<Tag>> GetAllAsync()
+        {
+            return await _context.Tags.ToListAsync();
         }
 
         public override async Task<Tag> GetByIdAsync(int id)

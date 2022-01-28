@@ -34,6 +34,7 @@ namespace BLL.Services.Testing
             return new TestParameters()
             {
                 Score = 0,
+                TrueAnswers = 0,
                 CountQuestion = dictionary.Words.Count,
                 DictionaryId = dictionaryId,
                 CurrentQuestion = 1,
@@ -86,7 +87,7 @@ namespace BLL.Services.Testing
             {
                 throw new ItemNotFoundException($"{typeof(TranslatedWord).Name} not found in dictionary with id {dictionaryId}");
             }
-            if(translates.Count < 3)
+            if (translates.Count < 3)
             {
                 throw new NotEnoughItemsException($"Not enough translates in dictionary with id {dictionaryId}, must be at least 4 words");
             }
@@ -115,9 +116,10 @@ namespace BLL.Services.Testing
             if (currentTranslates.Contains(answerParameters.Answer))
             {
                 paramCheck.IsTrueAnswer = true;
-                paramCheck.Parameters.Score++;
+                paramCheck.Parameters.TrueAnswers++;
 
             }
+            paramCheck.Parameters.Score = (paramCheck.Parameters.TrueAnswers / paramCheck.Parameters.CountQuestion) * 100;
             paramCheck.TrueAnswer = currentTranslates.First();
             return paramCheck;
         }

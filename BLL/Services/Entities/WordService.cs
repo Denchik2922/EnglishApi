@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using BLL.Exceptions;
 using BLL.Interfaces.Entities;
+using BLL.RequestFeatures;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Entities
@@ -12,16 +12,17 @@ namespace BLL.Services.Entities
     public class WordService : BaseGenaricService<Word>, IWordService
     {
         private readonly IMapper _mapper;
-        public WordService(EnglishContext context, IMapper mapper) : base(context) 
+        public WordService(EnglishContext context, IMapper mapper) : base(context)
         {
             _mapper = mapper;
         }
 
-        public async override Task<ICollection<Word>> GetAllAsync()
+        public override async Task<PagedList<Word>> GetAllAsync(PaginationParameters parameters)
         {
-            return await _context.Words
-                                .Include(w => w.Dictionary)
-                                .Include(w => w.Translates).ToListAsync();
+            var words = _context.Words.Include(w => w.Dictionary)
+                                      .Include(w => w.Translates);
+            return await PagedList<Word>
+                            .ToPagedList(words, parameters.PageNumber, parameters.PageSize);
         }
 
         public override async Task<Word> GetByIdAsync(int id)

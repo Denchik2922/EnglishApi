@@ -8,7 +8,7 @@ namespace EnglishApi.Dto
         public string Name { get; set; }
         public string Description { get; set; }
         public string UserId { get; set; }
-        public ICollection<TagDto> Tags { get; set; } 
+        public ICollection<TagDto> Tags { get; set; }
         public ICollection<WordDto> Words { get; set; }
         public ICollection<UserTestDto> SpellingTestUsers { get; set; }
         public ICollection<UserTestDto> MatchingTestUsers { get; set; }

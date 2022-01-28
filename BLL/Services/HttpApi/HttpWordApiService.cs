@@ -13,7 +13,7 @@ namespace BLL.Services.HttpApi
         {
             _httpClientFactory = httpClientFactory;
         }
-      
+
         public async Task<WordPhonetic> GetPhoneticByWord(string word)
         {
             var httpClient = _httpClientFactory.CreateClient("WordInfoClient");
@@ -26,12 +26,12 @@ namespace BLL.Services.HttpApi
                 {
                     responce.EnsureSuccessStatusCode();
                 }
-                catch(HttpRequestException e)
+                catch (HttpRequestException e)
                 {
                     throw;
                 }
                 var content = await responce.Content.ReadAsStringAsync();
-                
+
                 var arrObject = JArray.Parse(content);
                 wordPhonetic = arrObject[0]["phonetics"][0].ToObject<WordPhonetic>();
             }

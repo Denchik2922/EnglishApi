@@ -1,4 +1,5 @@
 ﻿using BLL.Exceptions;
+using BLL.RequestFeatures;
 using BLL.Tests.Infrastructure.Fixtures;
 using Models.Entities;
 using System.Threading.Tasks;
@@ -19,9 +20,10 @@ namespace BLL.Tests.Services
         {
             //arrange
             var service = _fixture.Create();
+            var paginParam = new PaginationParameters();
 
             //act
-            var response = await service.GetAllAsync();
+            var response = await service.GetAllAsync(paginParam);
 
             //assert
             Assert.Equal(2, response.Count);
@@ -80,7 +82,7 @@ namespace BLL.Tests.Services
                 AudioUrl = "Word Audio 3",
                 PictureUrl = "Word Picture 3",
                 EnglishDictionaryId = 1
-                
+
             };
 
             //act
@@ -132,7 +134,7 @@ namespace BLL.Tests.Services
             word.Transcription = "Word Transcription 2";
             word.AudioUrl = "Word Audio 2";
             word.PictureUrl = "Word Picture 2";
-            
+
             //act
             await service.UpdateAsync(word);
             var response = await service.GetByIdAsync(wordId);

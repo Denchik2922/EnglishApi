@@ -1,4 +1,5 @@
 ﻿using BLL.Exceptions;
+using BLL.RequestFeatures;
 using BLL.Tests.Infrastructure.Fixtures;
 using Models.Entities;
 using System.Threading.Tasks;
@@ -19,9 +20,10 @@ namespace BLL.Tests.Services
         {
             //arrange
             var service = _fixture.Create();
+            var paginParam = new PaginationParameters();
 
             //act
-            var response = await service.GetAllAsync();
+            var response = await service.GetAllAsync(paginParam);
 
             //assert
             Assert.Equal(1, response.Count);
@@ -157,7 +159,7 @@ namespace BLL.Tests.Services
                 Name = "Dictionary 2",
                 Description = "Dictionary Desk 2"
             };
-           
+
             //act & assert
             await Assert.ThrowsAsync<ItemNotFoundException>(() => service.UpdateAsync(dictionary));
         }

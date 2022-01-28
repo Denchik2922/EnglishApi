@@ -1,13 +1,13 @@
-﻿using Models.Entities;
-using System.Collections.Generic;
+﻿using BLL.RequestFeatures;
+using Models.Entities;
 using System.Threading.Tasks;
 
 namespace BLL.Interfaces.Entities
 {
     public interface IDictionaryService : IBaseGenaricService<EnglishDictionary>
     {
-        Task<ICollection<EnglishDictionary>> GetAllPublicDictionariesAsync();
-        Task<ICollection<EnglishDictionary>> GetAllPrivateDictionariesAsync(string userId);
+        Task<PagedList<EnglishDictionary>> GetPublicDictionariesAsync(PaginationParameters parameters);
+        Task<PagedList<EnglishDictionary>> GetPrivateDictionariesAsync(string userId, PaginationParameters parameters);
         Task<EnglishDictionary> GetByIdIncludeAsync(int id);
     }
 }

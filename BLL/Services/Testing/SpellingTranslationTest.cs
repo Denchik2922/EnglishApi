@@ -32,6 +32,7 @@ namespace BLL.Services.Testing
             return new TestParameters()
             {
                 Score = 0,
+                TrueAnswers = 0,
                 CountQuestion = dictionary.Words.Count,
                 DictionaryId = dictionaryId,
                 CurrentQuestion = 1,
@@ -83,11 +84,12 @@ namespace BLL.Services.Testing
             if (currentWord.Contains(answerParameters.Answer.ToLower()))
             {
                 paramCheck.IsTrueAnswer = true;
-                paramCheck.Parameters.Score++;
-                paramCheck.TrueAnswer = currentWord;
-            } 
-            paramCheck.TrueAnswer = currentWord;
+                paramCheck.Parameters.TrueAnswers++;
 
+            }
+
+            paramCheck.Parameters.Score = (paramCheck.Parameters.TrueAnswers / paramCheck.Parameters.CountQuestion) * 100;
+            paramCheck.TrueAnswer = currentWord;
             return paramCheck;
         }
 

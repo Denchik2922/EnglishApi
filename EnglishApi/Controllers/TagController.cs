@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using BLL.Interfaces.Entities;
+using BLL.RequestFeatures;
 using EnglishApi.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -23,6 +25,18 @@ namespace EnglishApi.Controllers
         }
 
         [HttpGet]
+        public async Task<ActionResult<ICollection<TagDto>>> GetAll([FromQuery] PaginationParameters parameters)
+        {
+            var tags = await _tagService.GetAllAsync(parameters);
+
+            ICollection<TagDto> tagsDto = _mapper.Map<ICollection<TagDto>>(tags);
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(tags.MetaData));
+
+            return Ok(tagsDto);
+        }
+
+        [HttpGet]
+        [Route("all")]
         public async Task<ActionResult<ICollection<TagDto>>> GetAll()
         {
             var tags = await _tagService.GetAllAsync();

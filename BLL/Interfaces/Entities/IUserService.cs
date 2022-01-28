@@ -1,12 +1,12 @@
-﻿using Models.Entities;
-using System.Collections.Generic;
+﻿using BLL.RequestFeatures;
+using Models.Entities;
 using System.Threading.Tasks;
 
 namespace BLL.Interfaces.Entities
 {
     public interface IUserService
     {
-        Task<ICollection<User>> GetAllAsync();
+        Task<PagedList<User>> GetAllAsync(PaginationParameters parameters);
         Task<User> GetByIdAsync(string userId);
     }
 }

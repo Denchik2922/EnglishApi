@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
 using BLL.Exceptions;
 using BLL.Interfaces.Entities;
+using BLL.RequestFeatures;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,35 +13,39 @@ namespace BLL.Services.Entities
     public class DictionaryService : BaseGenaricService<EnglishDictionary>, IDictionaryService
     {
         private readonly IMapper _mapper;
-        public DictionaryService(EnglishContext context, IMapper mapper) : base(context) 
+        public DictionaryService(EnglishContext context, IMapper mapper) : base(context)
         {
             _mapper = mapper;
         }
 
-        public override async Task<ICollection<EnglishDictionary>> GetAllAsync()
+        public override async Task<PagedList<EnglishDictionary>> GetAllAsync(PaginationParameters parameters)
         {
-            return await _context.EnglishDictionaries
+            var dictionaries = _context.EnglishDictionaries
                                 .Include(d => d.Tags)
-                                .ThenInclude(t => t.Tag)
-                                .ToListAsync();
+                                .ThenInclude(t => t.Tag);
+            return await PagedList<EnglishDictionary>
+                            .ToPagedList(dictionaries, parameters.PageNumber, parameters.PageSize);
         }
 
-        public async Task<ICollection<EnglishDictionary>> GetAllPublicDictionariesAsync()
+        public async Task<PagedList<EnglishDictionary>> GetPublicDictionariesAsync(PaginationParameters parameters)
         {
-            return await _context.EnglishDictionaries
+            var dictionaries = _context.EnglishDictionaries
                                 .Include(d => d.Tags)
                                 .ThenInclude(t => t.Tag)
-                                .Where(d => d.IsPrivate == false)
-                                .ToListAsync();
+                                .Where(d => d.IsPrivate == false);
+            return await PagedList<EnglishDictionary>
+                            .ToPagedList(dictionaries, parameters.PageNumber, parameters.PageSize);
         }
 
-        public async Task<ICollection<EnglishDictionary>> GetAllPrivateDictionariesAsync(string userId)
+        public async Task<PagedList<EnglishDictionary>> GetPrivateDictionariesAsync(string userId, PaginationParameters parameters)
         {
-            return await _context.EnglishDictionaries
+            var dictionaries = _context.EnglishDictionaries
                                 .Include(d => d.Tags)
                                 .ThenInclude(t => t.Tag)
-                                .Where(d => d.IsPrivate && d.UserId == userId)
-                                .ToListAsync();
+                                .Where(d => d.IsPrivate && d.UserId == userId);
+            return await PagedList<EnglishDictionary>
+                            .ToPagedList(dictionaries, parameters.PageNumber, parameters.PageSize);
+
         }
 
         public async Task<EnglishDictionary> GetByIdIncludeAsync(int id)

@@ -1,9 +1,4 @@
 ﻿using BLL.Tests.Infrastructure.Fixtures;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace BLL.Tests.Services
@@ -16,17 +11,17 @@ namespace BLL.Tests.Services
             _fixture = fixture;
         }
 
-       /* [Fact]
-        public async Task Should_Return_All_Users()
-        {
-            //arrange
-            var service = _fixture.Create();
+        /* [Fact]
+         public async Task Should_Return_All_Users()
+         {
+             //arrange
+             var service = _fixture.Create();
 
-            //act
-            var response = await service.GetAll();
+             //act
+             var response = await service.GetAll();
 
-            //assert
-            Assert.Equal(1, response.Count);
-        }*/
+             //assert
+             Assert.Equal(1, response.Count);
+         }*/
     }
 }

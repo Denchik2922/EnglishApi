@@ -7,7 +7,7 @@ namespace DAL
 {
     public class EnglishContext : IdentityDbContext<User>
     {
-        public EnglishContext(DbContextOptions<EnglishContext> options): base(options){}
+        public EnglishContext(DbContextOptions<EnglishContext> options) : base(options) { }
 
         public DbSet<EnglishDictionary> EnglishDictionaries { get; set; }
         public DbSet<Tag> Tags { get; set; }
@@ -17,10 +17,10 @@ namespace DAL
         public DbSet<ResultForMatchingTest> ResultForMatchingTests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-		{
-			base.OnModelCreating(modelBuilder);
+        {
+            base.OnModelCreating(modelBuilder);
 
-			modelBuilder.ApplyConfiguration(new EnglishDictionaryConfig());
+            modelBuilder.ApplyConfiguration(new EnglishDictionaryConfig());
             modelBuilder.ApplyConfiguration(new EnglishDictionaryTagConfig());
             modelBuilder.ApplyConfiguration(new RoleConfig());
             modelBuilder.ApplyConfiguration(new TagConfig());
@@ -30,5 +30,5 @@ namespace DAL
             modelBuilder.ApplyConfiguration(new WordConfig());
         }
 
-	}
+    }
 }

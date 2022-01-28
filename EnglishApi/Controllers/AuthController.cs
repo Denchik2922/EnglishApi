@@ -10,7 +10,7 @@ namespace EnglishApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController :  ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
@@ -24,7 +24,7 @@ namespace EnglishApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterDto userModel)
         {
-            if(userModel == null)
+            if (userModel == null)
             {
                 return BadRequest("UserRegister object is null");
             }

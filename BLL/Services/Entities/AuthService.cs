@@ -61,7 +61,7 @@ namespace BLL.Services.Entities
             var username = principal.Identity.Name;
 
             var user = await _userManager.FindByNameAsync(username);
-            if (user == null || 
+            if (user == null ||
                 user.RefreshToken != userToken.RefreshToken ||
                 user.RefreshTokenExpiryTime <= DateTime.Now)
             {

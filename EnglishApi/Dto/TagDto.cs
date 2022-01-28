@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace EnglishApi.Dto
+﻿namespace EnglishApi.Dto
 {
     public class TagDto
     {

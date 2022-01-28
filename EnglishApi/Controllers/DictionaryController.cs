@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using BLL.Interfaces.Entities;
+using BLL.RequestFeatures;
 using EnglishApi.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -29,33 +31,42 @@ namespace EnglishApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ICollection<DictionaryDto>>> GetAllDictionaries()
+        public async Task<IActionResult> GetAllDictionaries([FromQuery] PaginationParameters parameters)
         {
-            var dictionaries = await _dictionaryService.GetAllAsync();
+            var dictionaries = await _dictionaryService.GetAllAsync(parameters);
+
             ICollection<DictionaryDto> dictionariesDto = _mapper.Map<ICollection<DictionaryDto>>(dictionaries);
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dictionaries.MetaData));
+
             return Ok(dictionariesDto);
         }
 
         [HttpGet]
         [Route("public-dictionaries")]
-        public async Task<ActionResult<ICollection<DictionaryDto>>> GetPublicDictionaries()
+        public async Task<IActionResult> GetPublicDictionaries([FromQuery] PaginationParameters parameters)
         {
-            var dictionaries = await _dictionaryService.GetAllPublicDictionariesAsync();
+            var dictionaries = await _dictionaryService.GetPublicDictionariesAsync(parameters);
+
             ICollection<DictionaryDto> dictionariesDto = _mapper.Map<ICollection<DictionaryDto>>(dictionaries);
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dictionaries.MetaData));
+
             return Ok(dictionariesDto);
         }
 
         [HttpGet]
         [Route("private-dictionaries")]
-        public async Task<ActionResult<ICollection<DictionaryDto>>> GetPrivateDictionaries()
+        public async Task<IActionResult> GetPrivateDictionaries([FromQuery] PaginationParameters parameters)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var dictionaries = await _dictionaryService.GetAllPrivateDictionariesAsync(userId);
+            var dictionaries = await _dictionaryService.GetPrivateDictionariesAsync(userId, parameters);
+
             ICollection<DictionaryDto> dictionariesDto = _mapper.Map<ICollection<DictionaryDto>>(dictionaries);
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(dictionaries.MetaData));
+
             return Ok(dictionariesDto);
         }
 
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<DictionaryDetailsDto>> GetById(int id)
         {
@@ -99,7 +110,7 @@ namespace EnglishApi.Controllers
         [HttpDelete]
         public async Task<ActionResult> Delete(int id)
         {
-            var dictionary = _dictionaryService.GetByIdAsync(id);
+            var dictionary = await _dictionaryService.GetByIdAsync(id);
             var authorizationResult = await _authorizationService
                     .AuthorizeAsync(User, dictionary, "EditDictionaryPolicy");
             if (authorizationResult.Succeeded)

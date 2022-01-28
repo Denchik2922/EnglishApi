@@ -1,7 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using Models.Entities;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using Models.Entities;
 using System.Security.Claims;
 using System.Threading.Tasks;
 

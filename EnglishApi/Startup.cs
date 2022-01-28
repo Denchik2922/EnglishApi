@@ -121,7 +121,6 @@ namespace EnglishApi
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGenerateWordService, GenerateWordService>();
-            services.AddScoped(typeof(IBaseGenaricService<>), typeof(BaseGenaricService<>));
             services.AddScoped(typeof(ITestResultService<>), typeof(TestResultService<>));
             services.AddScoped<IJwtTokenService, JwtTokenService>();
 
@@ -168,10 +167,11 @@ namespace EnglishApi
             app.UseAuthentication();
             app.UseAuthorization();
 
-            
+
             app.UseCors(builder => builder.WithOrigins("https://localhost:5011")
                             .AllowAnyMethod()
-                            .AllowAnyHeader());
+                            .AllowAnyHeader()
+                            .WithExposedHeaders("X-Pagination"));
 
             app.UseEndpoints(endpoints =>
             {

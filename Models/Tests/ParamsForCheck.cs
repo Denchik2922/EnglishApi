@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-namespace Models.Tests
+﻿namespace Models.Tests
 {
     public class ParamsForCheck
     {

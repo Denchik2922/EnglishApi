@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using BLL.Interfaces.Entities;
+using BLL.RequestFeatures;
 using EnglishApi.Dto;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -22,10 +24,13 @@ namespace EnglishApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ICollection<UserDto>>> GetAll()
+        public async Task<ActionResult<ICollection<UserDto>>> GetAll([FromQuery] PaginationParameters parameters)
         {
-            var users = await _userService.GetAllAsync();
+            var users = await _userService.GetAllAsync(parameters);
+
             ICollection<UserDto> usersDto = _mapper.Map<ICollection<UserDto>>(users);
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(users.MetaData));
+
             return Ok(usersDto);
         }
 
