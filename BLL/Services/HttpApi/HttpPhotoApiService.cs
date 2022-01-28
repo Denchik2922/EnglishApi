@@ -12,12 +12,16 @@ namespace BLL.Services.HttpApi
     public class HttpPhotoApiService : IHttpPhotoApiService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IConfiguration _config;
+        private readonly string _apiKey;
+        private readonly string _apiPerPage;
 
-        public HttpPhotoApiService(IHttpClientFactory httpClientFactory, IConfiguration config)
+        public HttpPhotoApiService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
-            _config = config.GetSection("PhotoApiOptions");
+
+            var config = configuration.GetSection("PhotoApiOptions");
+            _apiKey = config["Key"];
+            _apiPerPage = config["Count"];
         }
 
         public async Task<ICollection<WordPhoto>> GetPhotosByWord(string word)
@@ -26,8 +30,8 @@ namespace BLL.Services.HttpApi
             ICollection<WordPhoto> wordPhotos;
             var query = new Dictionary<string, string>
             {
-                ["key"] = _config["Key"],
-                ["per_page"] = _config["Count"],
+                ["key"] = _apiKey,
+                ["per_page"] = _apiPerPage,
                 ["q"] = word
             };
 

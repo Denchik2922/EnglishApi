@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Entities
 {
-    public abstract class BaseGenaricService<T> : IBaseGenaricService<T> where T : class
+    public abstract class BaseGenericService<T> : IBaseGenericService<T> where T : class
     {
         protected readonly EnglishContext _context;
         protected readonly DbSet<T> _dbSet;
-        public BaseGenaricService(EnglishContext context)
+        public BaseGenericService(EnglishContext context)
         {
             _context = context;
             _dbSet = _context.Set<T>();

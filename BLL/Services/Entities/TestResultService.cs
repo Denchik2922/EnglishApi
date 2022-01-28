@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Entities
 {
-    public class TestResultService<T> : BaseGenaricService<T>, ITestResultService<T> where T : class, IResultTest
+    public class TestResultService<T> : BaseGenericService<T>, ITestResultService<T> where T : class, IResultTest
     {
         public TestResultService(EnglishContext context) : base(context) { }
 

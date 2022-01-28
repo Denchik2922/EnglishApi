@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Interfaces.Entities
 {
-    public interface ITagService : IBaseGenaricService<Tag>
+    public interface ITagService : IBaseGenericService<Tag>
     {
         Task<ICollection<Tag>> GetAllAsync();
     }

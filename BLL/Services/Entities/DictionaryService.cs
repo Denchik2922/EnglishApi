@@ -2,6 +2,7 @@
 using BLL.Exceptions;
 using BLL.Interfaces.Entities;
 using BLL.RequestFeatures;
+using BLL.ServiceExtensions;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Entities
 {
-    public class DictionaryService : BaseGenaricService<EnglishDictionary>, IDictionaryService
+    public class DictionaryService : BaseGenericService<EnglishDictionary>, IDictionaryService
     {
         private readonly IMapper _mapper;
         public DictionaryService(EnglishContext context, IMapper mapper) : base(context)
@@ -20,53 +21,67 @@ namespace BLL.Services.Entities
 
         public override async Task<PagedList<EnglishDictionary>> GetAllAsync(PaginationParameters parameters)
         {
-            var dictionaries = _context.EnglishDictionaries
-                                .Include(d => d.Tags)
-                                .ThenInclude(t => t.Tag);
+            var dictionaries = GetDictionariesQueryable()
+                               .Search(parameters.SearchTerm);
+
             return await PagedList<EnglishDictionary>
                             .ToPagedList(dictionaries, parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task<PagedList<EnglishDictionary>> GetPublicDictionariesAsync(PaginationParameters parameters)
         {
-            var dictionaries = _context.EnglishDictionaries
-                                .Include(d => d.Tags)
-                                .ThenInclude(t => t.Tag)
-                                .Where(d => d.IsPrivate == false);
+            var dictionaries = GetDictionariesQueryable()
+                               .Where(d => d.IsPrivate == false)
+                               .Search(parameters.SearchTerm);
+
             return await PagedList<EnglishDictionary>
                             .ToPagedList(dictionaries, parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task<PagedList<EnglishDictionary>> GetPrivateDictionariesAsync(string userId, PaginationParameters parameters)
         {
-            var dictionaries = _context.EnglishDictionaries
-                                .Include(d => d.Tags)
-                                .ThenInclude(t => t.Tag)
-                                .Where(d => d.IsPrivate && d.UserId == userId);
+            var dictionaries = GetDictionariesQueryable()
+                               .Where(d => d.IsPrivate && d.UserId == userId)
+                               .Search(parameters.SearchTerm);
+
             return await PagedList<EnglishDictionary>
                             .ToPagedList(dictionaries, parameters.PageNumber, parameters.PageSize);
 
         }
 
+        private IQueryable<EnglishDictionary> GetDictionariesQueryable()
+        {
+            return _context.EnglishDictionaries
+                                .Include(d => d.Tags)
+                                .ThenInclude(t => t.Tag);
+        }
+
         public async Task<EnglishDictionary> GetByIdIncludeAsync(int id)
         {
-            var dictionary = await _context.EnglishDictionaries
-                                             .Include(d => d.Tags)
-                                             .ThenInclude(t => t.Tag)
-                                             .Include(d => d.Creator)
-                                             .Include(d => d.SpellingTestResults)
-                                             .ThenInclude(r => r.User)
-                                             .Include(d => d.MatchingTestResults)
-                                             .ThenInclude(r => r.User)
-                                             .Include(d => d.Words)
-                                             .ThenInclude(w => w.Translates)
-                                             .AsSplitQuery()
+            var dictionary = await GetDictionariesWithAllInludesQueryable()
                                              .FirstOrDefaultAsync(d => d.Id == id);
+
             if (dictionary == null)
             {
                 throw new ItemNotFoundException($"{typeof(EnglishDictionary).Name} with id {id} not found");
             }
+
             return dictionary;
+        }
+
+        private IQueryable<EnglishDictionary> GetDictionariesWithAllInludesQueryable()
+        {
+            return _context.EnglishDictionaries
+                                    .Include(d => d.Tags)
+                                        .ThenInclude(t => t.Tag)
+                                    .Include(d => d.Creator)
+                                    .Include(d => d.SpellingTestResults)
+                                         .ThenInclude(r => r.User)
+                                    .Include(d => d.MatchingTestResults)
+                                          .ThenInclude(r => r.User)
+                                    .Include(d => d.Words)
+                                          .ThenInclude(w => w.Translates)
+                                    .AsSplitQuery();
         }
 
         public override async Task UpdateAsync(EnglishDictionary entity)

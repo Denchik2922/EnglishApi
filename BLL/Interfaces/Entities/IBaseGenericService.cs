@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Interfaces.Entities
 {
-    public interface IBaseGenaricService<T> where T : class
+    public interface IBaseGenericService<T> where T : class
     {
         public Task<T> GetByIdAsync(int id);
         public Task<PagedList<T>> GetAllAsync(PaginationParameters parameters);

@@ -2,7 +2,7 @@
 
 namespace BLL.Interfaces.Entities
 {
-    public interface IWordService : IBaseGenaricService<Word>
+    public interface IWordService : IBaseGenericService<Word>
     {
     }
 }

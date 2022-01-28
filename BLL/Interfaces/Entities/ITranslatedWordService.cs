@@ -3,7 +3,7 @@
 
 namespace BLL.Interfaces.Entities
 {
-    public interface ITranslatedWordService : IBaseGenaricService<TranslatedWord>
+    public interface ITranslatedWordService : IBaseGenericService<TranslatedWord>
     {
     }
 }

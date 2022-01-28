@@ -15,11 +15,19 @@ namespace BLL.Services.Entities
 {
     public class JwtTokenService : IJwtTokenService
     {
-        private readonly IConfigurationSection _jwtSettings;
         private readonly UserManager<User> _userManager;
+        private readonly string _jwtSecret;
+        private readonly string _jwtValidIssuer;
+        private readonly string _jwtExpiryInMinutes;
+        private readonly string _jwtValidAudience;
         public JwtTokenService(IConfiguration config, UserManager<User> userManager)
         {
-            _jwtSettings = config.GetSection("JwtSettings");
+            var _jwtSettings = config.GetSection("JwtSettings");
+            _jwtSecret = _jwtSettings["Secret"];
+            _jwtValidIssuer = _jwtSettings["validIssuer"];
+            _jwtValidAudience = _jwtSettings["validAudience"];
+            _jwtExpiryInMinutes = _jwtSettings["expiryInMinutes"];
+
             _userManager = userManager;
         }
 
@@ -33,7 +41,7 @@ namespace BLL.Services.Entities
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key = Encoding.UTF8.GetBytes(_jwtSettings["Secret"]);
+            var key = Encoding.UTF8.GetBytes(_jwtSecret);
             var secret = new SymmetricSecurityKey(key);
 
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
@@ -57,10 +65,10 @@ namespace BLL.Services.Entities
         private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
             var tokenOptions = new JwtSecurityToken(
-                issuer: _jwtSettings["validIssuer"],
-                audience: _jwtSettings["validAudience"],
+                issuer: _jwtValidIssuer,
+                audience: _jwtValidAudience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtSettings["expiryInMinutes"])),
+                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtExpiryInMinutes)),
                 signingCredentials: signingCredentials);
 
             return tokenOptions;
@@ -83,10 +91,10 @@ namespace BLL.Services.Entities
                 ValidateIssuer = true,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_jwtSettings["Secret"])),
+                    Encoding.UTF8.GetBytes(_jwtSecret)),
                 ValidateLifetime = false,
-                ValidIssuer = _jwtSettings["validIssuer"],
-                ValidAudience = _jwtSettings["validAudience"],
+                ValidIssuer = _jwtValidIssuer,
+                ValidAudience = _jwtValidAudience,
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             SecurityToken securityToken;

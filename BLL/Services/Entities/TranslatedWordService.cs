@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Entities
 {
-    public class TranslatedWordService : BaseGenaricService<TranslatedWord>, ITranslatedWordService
+    public class TranslatedWordService : BaseGenericService<TranslatedWord>, ITranslatedWordService
     {
         public TranslatedWordService(EnglishContext context) : base(context) { }
 

@@ -92,7 +92,7 @@ namespace EnglishApi.Controllers
             var userRole = User.FindFirstValue(ClaimTypes.Role);
             if (ModelState.IsValid)
             {
-                if (userRole.ToLower() == USER_ROLE)
+                if (userRole.ToLowerInvariant() == USER_ROLE)
                 {
                     dictionaryDto.IsPrivate = true;
                 }

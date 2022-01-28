@@ -11,6 +11,7 @@ namespace BLL.Services.Entities
     {
         private readonly UserManager<User> _userManager;
         private readonly IJwtTokenService _tokenService;
+        private const string USER_ROLE = "User";
 
         public AuthService(UserManager<User> userManager, IJwtTokenService tokenService)
         {
@@ -23,7 +24,7 @@ namespace BLL.Services.Entities
             var result = await _userManager.CreateAsync(user, password);
             if (result.Succeeded)
             {
-                await _userManager.AddToRoleAsync(user, "User");
+                await _userManager.AddToRoleAsync(user, USER_ROLE);
             }
             else
             {

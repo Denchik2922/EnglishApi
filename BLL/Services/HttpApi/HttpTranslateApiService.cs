@@ -10,11 +10,15 @@ namespace BLL.Services.HttpApi
     public class HttpTranslateApiService : IHttpTranslateApiService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IConfiguration _config;
+        private readonly string _apiTarget;
+        private readonly string _apiSource;
         public HttpTranslateApiService(IHttpClientFactory httpClientFactory, IConfiguration config)
         {
             _httpClientFactory = httpClientFactory;
-            _config = config.GetSection("TranslateApiOptions");
+            var _config = config.GetSection("TranslateApiOptions");
+            _apiTarget = _config["target"];
+            _apiSource = _config["source"];
+
         }
 
         public async Task<string> GetTranslatedWord(string word)
@@ -28,8 +32,8 @@ namespace BLL.Services.HttpApi
                 Content = new FormUrlEncodedContent(new Dictionary<string, string>
                 {
                     { "q", word },
-                    { "target", _config["target"] },
-                    { "source", _config["source"] },
+                    { "target", _apiTarget },
+                    { "source", _apiSource },
                 }),
             };
 

@@ -5,11 +5,12 @@ using BLL.RequestFeatures;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Entities
 {
-    public class WordService : BaseGenaricService<Word>, IWordService
+    public class WordService : BaseGenericService<Word>, IWordService
     {
         private readonly IMapper _mapper;
         public WordService(EnglishContext context, IMapper mapper) : base(context)
@@ -19,23 +20,30 @@ namespace BLL.Services.Entities
 
         public override async Task<PagedList<Word>> GetAllAsync(PaginationParameters parameters)
         {
-            var words = _context.Words.Include(w => w.Dictionary)
-                                      .Include(w => w.Translates);
+            var words = GetWordsQueryable();
+
             return await PagedList<Word>
                             .ToPagedList(words, parameters.PageNumber, parameters.PageSize);
         }
 
         public override async Task<Word> GetByIdAsync(int id)
         {
-            var word = await _context.Words
-                                .Include(w => w.Dictionary)
-                                .Include(w => w.Translates)
+            var word = await GetWordsQueryable()
                                 .FirstOrDefaultAsync(w => w.Id == id);
+
             if (word == null)
             {
                 throw new ItemNotFoundException($"{typeof(Word).Name} with id {id} not found");
             }
+
             return word;
+        }
+
+        private IQueryable<Word> GetWordsQueryable()
+        {
+            return _context.Words
+                              .Include(w => w.Dictionary)
+                              .Include(w => w.Translates);
         }
 
         public async override Task UpdateAsync(Word entity)

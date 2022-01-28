@@ -10,7 +10,9 @@ namespace BLL.Services.HttpApi
         private readonly IHttpPhotoApiService _photoApi;
         private readonly IHttpTranslateApiService _translateApi;
         private readonly IHttpWordApiService _wordApi;
-        public GenerateWordService(IHttpPhotoApiService photoApi, IHttpTranslateApiService translateApi, IHttpWordApiService wordApi)
+        public GenerateWordService(IHttpPhotoApiService photoApi,
+                                   IHttpTranslateApiService translateApi,
+                                   IHttpWordApiService wordApi)
         {
             _photoApi = photoApi;
             _translateApi = translateApi;

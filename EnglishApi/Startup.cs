@@ -29,12 +29,37 @@ namespace EnglishApi
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+        public string ConnectionString { get; }
+        public string JwtValidIssuer { get; }
+        public string JwtValidAudience { get; }
+        public string JwtSecret { get; }
+        public string UrlEnglishWordApi { get; }
+        public string UrlPhotoApi { get; }
+        public string UrlTranslateApi { get; }
+        public string HostTranslateApi { get; }
+        public string KeyTranslateApi { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-        }
 
-        public IConfiguration Configuration { get; }
+            ConnectionString = Configuration.GetConnectionString("DefaultConnection");
+
+            var jwtSettings = Configuration.GetSection("JWTSettings");
+            JwtValidIssuer = jwtSettings["validIssuer"];
+            JwtValidAudience = jwtSettings["validAudience"];
+            JwtSecret = jwtSettings["Secret"];
+
+            var translateApiOpt = Configuration.GetSection("TranslateApiOptions");
+            UrlTranslateApi = translateApiOpt["Url"];
+            HostTranslateApi = translateApiOpt["Host"];
+            KeyTranslateApi = translateApiOpt["Key"];
+
+            UrlEnglishWordApi = Configuration.GetSection("EnglishWordApiOptions")["Url"];
+            UrlPhotoApi = Configuration.GetSection("PhotoApiOptions")["Url"];
+
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -49,26 +74,25 @@ namespace EnglishApi
             //Http Clients
             services.AddHttpClient("WordInfoClient", config =>
             {
-                config.BaseAddress = new Uri(Configuration.GetSection("EnglishWordApiOptions")["Url"]);
+                config.BaseAddress = new Uri(UrlEnglishWordApi);
                 config.Timeout = TimeSpan.FromSeconds(5);
             });
 
-            var translateApiOpt = Configuration.GetSection("TranslateApiOptions");
             services.AddHttpClient("TranslateClient", config =>
             {
-                config.BaseAddress = new Uri(translateApiOpt["Url"]);
-                config.DefaultRequestHeaders.Add("x-rapidapi-host", translateApiOpt["Host"]);
-                config.DefaultRequestHeaders.Add("x-rapidapi-key", translateApiOpt["Key"]);
+                config.BaseAddress = new Uri(UrlTranslateApi);
+                config.DefaultRequestHeaders.Add("x-rapidapi-host", HostTranslateApi);
+                config.DefaultRequestHeaders.Add("x-rapidapi-key", KeyTranslateApi);
             });
 
             services.AddHttpClient("PhotoApiClient", config =>
             {
-                config.BaseAddress = new Uri(Configuration.GetSection("PhotoApiOptions")["Url"]);
+                config.BaseAddress = new Uri(UrlPhotoApi);
             });
 
             //Db connection
             services.AddDbContext<EnglishContext>(options =>
-               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+               options.UseSqlServer(ConnectionString));
 
             //Identity setting
             services.AddIdentity<User, IdentityRole>()
@@ -80,7 +104,6 @@ namespace EnglishApi
             });
 
             //Configure jwt authentication
-            var jwtSettings = Configuration.GetSection("JWTSettings");
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -94,9 +117,9 @@ namespace EnglishApi
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
 
-                    ValidIssuer = jwtSettings["validIssuer"],
-                    ValidAudience = jwtSettings["validAudience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]))
+                    ValidIssuer = JwtValidIssuer,
+                    ValidAudience = JwtValidAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtSecret))
                 };
             });
 

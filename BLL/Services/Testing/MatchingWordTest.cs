@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BLL.Exceptions;
+﻿using BLL.Exceptions;
 using BLL.Interfaces.Testing;
 using DAL;
 using Microsoft.EntityFrameworkCore;
@@ -12,37 +11,11 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Testing
 {
-    public class MatchingWordTest : IMatchingWordTest
+    public class MatchingWordTest : BaseTestService<ParamsForMatchingQuestion>, IMatchingWordTest
     {
-        private readonly EnglishContext _context;
-        private readonly IMapper _mapper;
-        public MatchingWordTest(EnglishContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
+        public MatchingWordTest(EnglishContext context) : base(context){}
 
-        public async Task<TestParameters> StartTest(int dictionaryId)
-        {
-            var dictionary = await _context.EnglishDictionaries
-                                            .Include(d => d.Words)
-                                            .FirstOrDefaultAsync(d => d.Id == dictionaryId);
-            if (dictionary == null)
-            {
-                throw new ItemNotFoundException($"{typeof(EnglishDictionary).Name} with id {dictionaryId} not found");
-            }
-            return new TestParameters()
-            {
-                Score = 0,
-                TrueAnswers = 0,
-                CountQuestion = dictionary.Words.Count,
-                DictionaryId = dictionaryId,
-                CurrentQuestion = 1,
-                CountWord = 1
-            };
-        }
-
-        public async Task<ParamsForMatchingQuestion> GetPartOfTest(TestParameters param)
+        public override async Task<ParamsForMatchingQuestion> GetPartOfTest(TestParameters param)
         {
             var word = await GetWord(param.DictionaryId, param.CurrentQuestion, param.CountWord);
             var translates = await GetTranslates(word.Id, param.DictionaryId, word.Translates);
@@ -99,11 +72,11 @@ namespace BLL.Services.Testing
             return translates;
         }
 
-        public async Task<ParamsForCheck> CheckQuestion(ParamsForAnswer answerParameters)
+        public override async Task<ParamsForCheck> CheckQuestion(ParamsForAnswer answerParameters)
         {
             var word = await _context.Words
                 .Include(w => w.Translates)
-                .FirstOrDefaultAsync(w => w.Name.ToLower().Contains(answerParameters.Question.ToLower()));
+                .FirstOrDefaultAsync(w => w.Name.ToLowerInvariant().Contains(answerParameters.Question.ToLowerInvariant()));
             if (word == null)
             {
                 throw new ItemNotFoundException($"{typeof(Word).Name} with name {answerParameters.Question} not found");
@@ -117,10 +90,13 @@ namespace BLL.Services.Testing
             {
                 paramCheck.IsTrueAnswer = true;
                 paramCheck.Parameters.TrueAnswers++;
-
             }
+            else
+            {
+                paramCheck.TrueAnswer = currentTranslates.First();
+            }
+
             paramCheck.Parameters.Score = (paramCheck.Parameters.TrueAnswers / paramCheck.Parameters.CountQuestion) * 100;
-            paramCheck.TrueAnswer = currentTranslates.First();
             return paramCheck;
         }
     }

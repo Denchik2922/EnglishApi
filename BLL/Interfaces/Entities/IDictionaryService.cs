@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace BLL.Interfaces.Entities
 {
-    public interface IDictionaryService : IBaseGenaricService<EnglishDictionary>
+    public interface IDictionaryService : IBaseGenericService<EnglishDictionary>
     {
         Task<PagedList<EnglishDictionary>> GetPublicDictionariesAsync(PaginationParameters parameters);
         Task<PagedList<EnglishDictionary>> GetPrivateDictionariesAsync(string userId, PaginationParameters parameters);
