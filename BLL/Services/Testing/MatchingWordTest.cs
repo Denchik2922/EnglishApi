@@ -48,12 +48,12 @@ namespace BLL.Services.Testing
                                                               int dictionaryId,
                                                               ICollection<TranslatedWord> wordTranslates)
         {
-            var translates = await _context.TranslatedWords.AsNoTracking()
-                                                .Where(t => t.WordId != wordId &&
-                                                            t.Word.EnglishDictionaryId == dictionaryId)
+            var translates = await _context.Words.AsNoTracking()
+                                                .Where(w => w.Id != wordId &&
+                                                            w.EnglishDictionaryId == dictionaryId)
                                                 .OrderBy(r => Guid.NewGuid())
                                                 .Take(3)
-                                                .Select(t => t.Name)
+                                                .Select(w => String.Join(", ", w.Translates.Select(t => t.Name)))
                                                 .ToListAsync();
 
             if (translates == null)
@@ -65,7 +65,8 @@ namespace BLL.Services.Testing
                 throw new NotEnoughItemsException($"Not enough translates in dictionary with id {dictionaryId}, must be at least 4 words");
             }
 
-            string currentTranslate = wordTranslates.Select(t => t.Name).FirstOrDefault();
+            string currentTranslate = String.Join(", ", wordTranslates.Select(t => t.Name));
+
             translates.Add(currentTranslate);
             translates = translates.OrderBy(t => Guid.NewGuid()).ToList();
 
@@ -76,7 +77,7 @@ namespace BLL.Services.Testing
         {
             var word = await _context.Words
                 .Include(w => w.Translates)
-                .FirstOrDefaultAsync(w => w.Name.ToLowerInvariant().Contains(answerParameters.Question.ToLowerInvariant()));
+                .FirstOrDefaultAsync(w => w.Name.ToLower().Contains(answerParameters.Question.ToLowerInvariant()));
             if (word == null)
             {
                 throw new ItemNotFoundException($"{typeof(Word).Name} with name {answerParameters.Question} not found");
@@ -85,15 +86,16 @@ namespace BLL.Services.Testing
 
             var paramCheck = new ParamsForCheck();
             paramCheck.Parameters = answerParameters.Parameters;
+            var answerTranslates = answerParameters.Answer.Split(',');
 
-            if (currentTranslates.Contains(answerParameters.Answer))
+            if (currentTranslates.Any(t => answerTranslates.Contains(t)))
             {
                 paramCheck.IsTrueAnswer = true;
                 paramCheck.Parameters.TrueAnswers++;
             }
             else
             {
-                paramCheck.TrueAnswer = currentTranslates.First();
+                paramCheck.TrueAnswer = String.Join(", ", currentTranslates);
             }
 
             paramCheck.Parameters.Score = (paramCheck.Parameters.TrueAnswers / paramCheck.Parameters.CountQuestion) * 100;

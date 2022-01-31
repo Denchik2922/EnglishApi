@@ -4,6 +4,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Tests;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,38 +20,37 @@ namespace BLL.Services.Testing
             var paramQuestion = new ParamsForTranslateQuestion()
             {
                 Parameters = param,
-                WordName = translate.Name
+                WordName = translate
             };
             return paramQuestion;
         }
 
-        private async Task<TranslatedWord> GetTranslate(int dicId, int currQuestion, int countWord)
+        private async Task<string> GetTranslate(int dicId, int currQuestion, int countWord)
         {
-            var translated = await _context.TranslatedWords
-                                     .Include(w => w.Word)
+            var wordTranslates = await _context.Words
+                                     .Include(w => w.Translates)
                                      .AsNoTracking()
-                                     .Where(w => w.Word.EnglishDictionaryId == dicId)
+                                     .Where(w => w.EnglishDictionaryId == dicId)
                                      .Skip((currQuestion - 1) * countWord)
                                      .Take(countWord)
+                                     .Select(w => String.Join(", ", w.Translates.Select(t => t.Name)))
                                      .FirstOrDefaultAsync();
-            if (translated == null)
-            {
-                throw new ItemNotFoundException($"{typeof(TranslatedWord).Name} not found in dictionary with id {dicId}");
-            }
-            return translated;
+            return wordTranslates;
         }
 
         public override async Task<ParamsForCheck> CheckQuestion(ParamsForAnswer answerParameters)
         {
-            var translatedWord = await _context.TranslatedWords
-                .Include(t => t.Word)
-                .FirstOrDefaultAsync(t => t.Name.ToLowerInvariant().Contains(answerParameters.Question.ToLowerInvariant()));
-            if (translatedWord == null)
+            var questionTranslates = answerParameters.Question.Split(',');
+            var word = await _context.Words
+                                    .Include(w => w.Translates)
+                                    .FirstOrDefaultAsync(w => w.Translates
+                                                               .Any(t => questionTranslates.Contains(t.Name)));
+            if (word == null)
             {
                 throw new ItemNotFoundException($"{typeof(TranslatedWord).Name} with name {answerParameters.Question} not found");
             }
 
-            var currentWord = translatedWord.Word.Name.ToLowerInvariant();
+            var currentWord = word.Name.ToLowerInvariant();
             var paramCheck = new ParamsForCheck();
             paramCheck.Parameters = answerParameters.Parameters;
 

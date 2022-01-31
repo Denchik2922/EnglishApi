@@ -16,7 +16,7 @@
                 _pageSize = (value > maxPageSize) ? maxPageSize : value;
             }
         }
-
         public string SearchTerm { get; set; }
+        public string SearchTags { get; set; }
     }
 }
