@@ -1,7 +1,7 @@
 ﻿using BLL.Interfaces.Entities;
 using DAL;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities;
+using Models.Entities.Interfaces;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Entities

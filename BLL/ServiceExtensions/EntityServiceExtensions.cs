@@ -1,21 +1,21 @@
 ﻿using Models.Entities;
-using System.Collections;
-using System.Collections.Generic;
+using Models.Entities.Interfaces;
+using System;
 using System.Linq;
 
 namespace BLL.ServiceExtensions
 {
-    public static class DictionaryServiceExtension
+    public static class EntityServiceExtensions
     {
-        public static IQueryable<EnglishDictionary> Search(this IQueryable<EnglishDictionary> dictionaries, string searchTerm)
+        public static IQueryable<T> Search<T>(this IQueryable<T> list, string searchTerm) where T : class, IEntity
         {
             if (string.IsNullOrWhiteSpace(searchTerm))
             {
-                return dictionaries;
+                return list;
             }
-            var lowerCaseSearchTerm = searchTerm.Trim().ToLower();
+            var lowerCaseSearchTerm = searchTerm.Trim().ToLowerInvariant();
 
-            return dictionaries.Where(d => d.Name.ToLower().Contains(lowerCaseSearchTerm));
+            return list.Where(d => d.Name.ToLower().Contains(lowerCaseSearchTerm));
         }
 
         public static IQueryable<EnglishDictionary> SearchByTags(this IQueryable<EnglishDictionary> dictionaries, string tagsSearch)

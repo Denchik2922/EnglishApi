@@ -23,7 +23,7 @@ namespace BLL.Services.HttpApi
 
         public async Task<string> GetTranslatedWord(string word)
         {
-            string translatedWord;
+            string translatedWord = "";
             var httpClient = _httpClientFactory.CreateClient("TranslateClient");
 
             var request = new HttpRequestMessage
@@ -37,13 +37,15 @@ namespace BLL.Services.HttpApi
                 }),
             };
 
-            using (var responce = await httpClient.SendAsync(request))
+            using (var response = await httpClient.SendAsync(request))
             {
-                responce.EnsureSuccessStatusCode();
-                var content = await responce.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var Jobject = JObject.Parse(content);
 
-                var Jobject = JObject.Parse(content);
-                translatedWord = Jobject["data"]["translations"][0]["translatedText"].ToObject<string>();
+                    translatedWord = Jobject["data"]["translations"][0]["translatedText"].ToObject<string>();
+                }
             }
             return translatedWord;
         }

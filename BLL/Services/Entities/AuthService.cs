@@ -17,6 +17,7 @@ namespace BLL.Services.Entities
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            Console.WriteLine("AuthService");
         }
 
         public async Task Register(User user, string password)
@@ -71,8 +72,15 @@ namespace BLL.Services.Entities
 
             var token = await _tokenService.GetToken(user);
             user.RefreshToken = _tokenService.GenerateRefreshToken();
-            await _userManager.UpdateAsync(user);
 
+            var result = await _userManager.UpdateAsync(user);
+            if (result != IdentityResult.Success)
+            {
+                foreach (var error in result.Errors)
+                {
+                    throw new Exception($"Code: {error.Code}, Description: { error.Description}");
+                }
+            }
             return new UserToken { Token = token, RefreshToken = user.RefreshToken };
         }
 
@@ -89,6 +97,7 @@ namespace BLL.Services.Entities
                 var token = await _tokenService.GetToken(user);
                 user.RefreshToken = _tokenService.GenerateRefreshToken();
                 user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
                 await _userManager.UpdateAsync(user);
                 return new UserToken { Token = token, RefreshToken = user.RefreshToken };
             }

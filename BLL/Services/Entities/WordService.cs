@@ -2,6 +2,7 @@
 using BLL.Exceptions;
 using BLL.Interfaces.Entities;
 using BLL.RequestFeatures;
+using BLL.ServiceExtensions;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -21,6 +22,16 @@ namespace BLL.Services.Entities
         public override async Task<PagedList<Word>> GetAllAsync(PaginationParameters parameters)
         {
             var words = GetWordsQueryable();
+
+            return await PagedList<Word>
+                            .ToPagedList(words, parameters.PageNumber, parameters.PageSize);
+        }
+
+        public async Task<PagedList<Word>> GetWordsForDictionaryAsync(int dictionaryId, PaginationParameters parameters)
+        {
+            var words = GetWordsQueryable()
+                            .Where(w => w.EnglishDictionaryId == dictionaryId)
+                            .Search(parameters.SearchTerm);
 
             return await PagedList<Word>
                             .ToPagedList(words, parameters.PageNumber, parameters.PageSize);

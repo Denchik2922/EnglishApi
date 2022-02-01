@@ -1,4 +1,6 @@
-﻿namespace Models.Entities
+﻿using Models.Entities.Interfaces;
+
+namespace Models.Entities
 {
     public class ResultForSpellingTest : IResultTest
     {

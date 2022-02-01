@@ -1,4 +1,4 @@
-﻿namespace Models.Entities
+﻿namespace Models.Entities.Interfaces
 {
     public interface IResultTest
     {

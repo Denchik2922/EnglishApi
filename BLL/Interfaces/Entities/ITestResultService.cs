@@ -1,4 +1,4 @@
-﻿using Models.Entities;
+﻿using Models.Entities.Interfaces;
 using System.Threading.Tasks;
 
 namespace BLL.Interfaces.Entities

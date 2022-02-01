@@ -47,6 +47,17 @@ namespace EnglishApi.Controllers
             return Ok(wordsDto);
         }
 
+        [HttpGet("dictionary-words/{dictionaryId}")]
+        public async Task<ActionResult<ICollection<WordDto>>> GetWordsForDictionary([FromQuery] PaginationParameters parameters, int dictionaryId)
+        {
+            var words = await _wordService.GetWordsForDictionaryAsync(dictionaryId, parameters);
+
+            ICollection<WordDto> wordsDto = _mapper.Map<ICollection<WordDto>>(words);
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(words.MetaData));
+
+            return Ok(wordsDto);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<WordDto>> GetById(int id)
         {

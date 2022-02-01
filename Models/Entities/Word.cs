@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Models.Entities.Interfaces;
+using System.Collections.Generic;
 
 namespace Models.Entities
 {
-    public class Word
+    public class Word : IEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using Models.Entities.Interfaces;
+using System.Collections.Generic;
 
 namespace Models.Entities
 {
-    public class Tag
+    public class Tag : IEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }

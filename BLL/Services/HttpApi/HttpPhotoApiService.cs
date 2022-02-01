@@ -27,7 +27,7 @@ namespace BLL.Services.HttpApi
         public async Task<ICollection<WordPhoto>> GetPhotosByWord(string word)
         {
             var httpClient = _httpClientFactory.CreateClient("PhotoApiClient");
-            ICollection<WordPhoto> wordPhotos;
+            ICollection<WordPhoto> wordPhotos = new List<WordPhoto>();
             var query = new Dictionary<string, string>
             {
                 ["key"] = _apiKey,
@@ -35,13 +35,16 @@ namespace BLL.Services.HttpApi
                 ["q"] = word
             };
 
-            using (var responce = await httpClient.GetAsync(QueryHelpers.AddQueryString("/api/", query),
+            using (var response = await httpClient.GetAsync(QueryHelpers.AddQueryString("/api/", query),
                 HttpCompletionOption.ResponseHeadersRead))
             {
-                responce.EnsureSuccessStatusCode();
-                var content = await responce.Content.ReadAsStringAsync();
-                var Jobject = JObject.Parse(content);
-                wordPhotos = Jobject["hits"].ToObject<ICollection<WordPhoto>>();
+                if (response.IsSuccessStatusCode)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    var Jobject = JObject.Parse(content);
+
+                    wordPhotos = Jobject["hits"].ToObject<ICollection<WordPhoto>>();
+                }
             }
             return wordPhotos;
         }
