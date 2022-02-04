@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using EnglishApi.Dto.DictionaryDtos;
+using System.Collections.Generic;
 
-namespace EnglishApi.Dto
+namespace EnglishApi.Dto.UserDtos
 {
     public class UserDetailsDto
     {

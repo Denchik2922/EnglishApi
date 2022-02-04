@@ -1,4 +1,4 @@
-﻿namespace EnglishApi.Dto
+﻿namespace EnglishApi.Dto.AuthDtos
 {
     public class AuthResponseDto
     {

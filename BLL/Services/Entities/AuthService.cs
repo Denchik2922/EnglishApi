@@ -17,7 +17,6 @@ namespace BLL.Services.Entities
         {
             _userManager = userManager;
             _tokenService = tokenService;
-            Console.WriteLine("AuthService");
         }
 
         public async Task Register(User user, string password)

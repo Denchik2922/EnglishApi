@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EnglishApi.Dto;
+using EnglishApi.Dto.TagDtos;
 using Models.Entities;
 using System.Linq;
 

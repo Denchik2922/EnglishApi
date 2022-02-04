@@ -1,4 +1,4 @@
-﻿namespace EnglishApi.Dto
+﻿namespace EnglishApi.Dto.TagDtos
 {
     public class TagDto
     {

@@ -2,7 +2,7 @@
 using BLL.Interfaces.Entities;
 using BLL.Interfaces.HttpApi;
 using BLL.RequestFeatures;
-using EnglishApi.Dto;
+using EnglishApi.Dto.WordDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;

@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using EnglishApi.Dto.TagDtos;
+using EnglishApi.Dto.UserDtos;
+using EnglishApi.Dto.WordDtos;
+using System.Collections.Generic;
 
-namespace EnglishApi.Dto
+namespace EnglishApi.Dto.DictionaryDtos
 {
     public class DictionaryDetailsDto
     {

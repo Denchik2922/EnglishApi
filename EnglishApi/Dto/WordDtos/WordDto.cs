@@ -1,8 +1,9 @@
-﻿using EnglishApi.Infrastructure.Validations;
+﻿using EnglishApi.Dto.TranslatesDtos;
+using EnglishApi.Infrastructure.Validations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace EnglishApi.Dto
+namespace EnglishApi.Dto.WordDtos
 {
     public class WordDto
     {

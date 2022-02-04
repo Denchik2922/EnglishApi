@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BLL.Interfaces.Entities;
 using BLL.Interfaces.Testing;
-using EnglishApi.Dto;
+using EnglishApi.Dto.TestResultDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;

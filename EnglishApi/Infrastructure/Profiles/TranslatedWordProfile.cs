@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using EnglishApi.Dto;
+using EnglishApi.Dto.TranslatesDtos;
 using Models.Entities;
 
 namespace EnglishApi.Infrastructure.Profiles

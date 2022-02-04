@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BLL.Interfaces.Entities;
 using BLL.RequestFeatures;
-using EnglishApi.Dto;
+using EnglishApi.Dto.TagDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;

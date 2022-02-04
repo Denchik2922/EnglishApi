@@ -1,4 +1,4 @@
-﻿namespace EnglishApi.Dto
+﻿namespace EnglishApi.Dto.TranslatesDtos
 {
     public class TranslatedWordDto
     {

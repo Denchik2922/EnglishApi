@@ -12,10 +12,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -23,12 +25,14 @@ using Microsoft.OpenApi.Models;
 using Models.Entities;
 using Serilog;
 using System;
+using System.IO;
 using System.Text;
 
 namespace EnglishApi
 {
     public class Startup
     {
+        public const string STATIC_FILE_FOLDER = "StaticFiles";
         public IConfiguration Configuration { get; }
         public string ConnectionString { get; }
         public string JwtValidIssuer { get; }
@@ -39,6 +43,8 @@ namespace EnglishApi
         public string UrlTranslateApi { get; }
         public string HostTranslateApi { get; }
         public string KeyTranslateApi { get; }
+        public string GoogleClientId { get; }
+        public string GoogleClientSecret { get; }
 
         public Startup(IConfiguration configuration)
         {
@@ -58,6 +64,9 @@ namespace EnglishApi
 
             UrlEnglishWordApi = Configuration.GetSection("EnglishWordApiOptions")["Url"];
             UrlPhotoApi = Configuration.GetSection("PhotoApiOptions")["Url"];
+
+            GoogleClientId = Configuration["Authentication:Google:ClientId"];
+            GoogleClientSecret = Configuration["Authentication:Google:ClientSecret"];
 
         }
 
@@ -146,6 +155,7 @@ namespace EnglishApi
             services.AddScoped<IGenerateWordService, GenerateWordService>();
             services.AddScoped(typeof(ITestResultService<>), typeof(TestResultService<>));
             services.AddScoped<IJwtTokenService, JwtTokenService>();
+            services.AddScoped<IUploadImagesService, UploadImagesService>();
 
             //Http Services
             services.AddScoped<IHttpPhotoApiService, HttpPhotoApiService>();
@@ -181,6 +191,13 @@ namespace EnglishApi
 
             app.UseMiddleware<ExceptionMiddleware>(loggerFactory.CreateLogger(nameof(ExceptionMiddleware)));
 
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), STATIC_FILE_FOLDER)),
+                RequestPath = new PathString($"/{STATIC_FILE_FOLDER}")
+            });
+
             app.UseHttpsRedirection();
 
             app.UseSerilogRequestLogging();
@@ -195,6 +212,7 @@ namespace EnglishApi
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .WithExposedHeaders("X-Pagination"));
+
 
             app.UseEndpoints(endpoints =>
             {

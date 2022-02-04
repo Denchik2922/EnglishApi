@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EnglishApi.Dto
+namespace EnglishApi.Dto.AuthDtos
 {
     public class UserChangePasswordDto
     {

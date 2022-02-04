@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BLL.Interfaces.Entities;
-using EnglishApi.Dto;
+using EnglishApi.Dto.AuthDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
