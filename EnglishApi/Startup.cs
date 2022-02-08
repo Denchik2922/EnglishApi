@@ -8,6 +8,7 @@ using DAL;
 using EnglishApi.Infrastructure.AuthorizationHandlers;
 using EnglishApi.Infrastructure.Profiles;
 using EnglishApi.Middleware;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +27,7 @@ using Models.Entities;
 using Serilog;
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace EnglishApi
@@ -78,6 +80,7 @@ namespace EnglishApi
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnglishApi", Version = "v1" });
+
             });
 
             //Http Clients
@@ -117,7 +120,8 @@ namespace EnglishApi
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
+            })
+            .AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -207,12 +211,10 @@ namespace EnglishApi
             app.UseAuthentication();
             app.UseAuthorization();
 
-
             app.UseCors(builder => builder.WithOrigins("https://localhost:5011")
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .WithExposedHeaders("X-Pagination"));
-
 
             app.UseEndpoints(endpoints =>
             {

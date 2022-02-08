@@ -1,4 +1,5 @@
 ﻿using BLL.Interfaces.Entities;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -20,6 +21,7 @@ namespace BLL.Services.Entities
         private readonly string _jwtValidIssuer;
         private readonly string _jwtExpiryInMinutes;
         private readonly string _jwtValidAudience;
+        private readonly string _googleClientId;
         public JwtTokenService(IConfiguration config, UserManager<User> userManager)
         {
             var _jwtSettings = config.GetSection("JwtSettings");
@@ -27,8 +29,19 @@ namespace BLL.Services.Entities
             _jwtValidIssuer = _jwtSettings["validIssuer"];
             _jwtValidAudience = _jwtSettings["validAudience"];
             _jwtExpiryInMinutes = _jwtSettings["expiryInMinutes"];
-
+            _googleClientId = config["Authentication:Google:ClientId"];
             _userManager = userManager;
+        }
+
+        public async Task<GoogleJsonWebSignature.Payload> VerifyGoogleToken(string tokenId)
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new List<string>() { _googleClientId }
+            };
+            var payload = await GoogleJsonWebSignature.ValidateAsync(tokenId, settings);
+
+            return payload;
         }
 
         public async Task<string> GetToken(User user)

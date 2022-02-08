@@ -19,6 +19,37 @@ namespace BLL.Services.Entities
             _tokenService = tokenService;
         }
 
+        public async Task<UserToken> ExternalAuth(string provider, string tokenId)
+        {
+            var payload = await _tokenService.VerifyGoogleToken(tokenId);
+            var info = new UserLoginInfo(provider, payload.Subject, provider);
+
+            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
+            if (user == null)
+            {
+                user = await _userManager.FindByEmailAsync(payload.Email);
+                if (user == null)
+                {
+                    user = new User { Email = payload.Email, UserName = payload.Name };
+                    await _userManager.CreateAsync(user);
+
+                    await _userManager.AddToRoleAsync(user, USER_ROLE);
+                    await _userManager.AddLoginAsync(user, info);
+                }
+                else
+                {
+                    await _userManager.AddLoginAsync(user, info);
+                }
+            }
+
+            var token = await _tokenService.GetToken(user);
+            user.RefreshToken = _tokenService.GenerateRefreshToken();
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(7);
+
+            await _userManager.UpdateAsync(user);
+            return new UserToken { Token = token, RefreshToken = user.RefreshToken };
+        }
+
         public async Task Register(User user, string password)
         {
             var result = await _userManager.CreateAsync(user, password);

@@ -14,10 +14,23 @@ namespace EnglishApi.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IMapper _mapper;
+
         public AuthController(IAuthService authService, IMapper mapper)
         {
             _authService = authService;
             _mapper = mapper;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("external-login")]
+        public async Task<IActionResult> ExternalLogin(ExternalAuthDto externalAuthDto)
+        {
+            if (externalAuthDto == null)
+            {
+                return BadRequest("External auth object is null");
+            }
+            var token = await _authService.ExternalAuth(externalAuthDto.Provider, externalAuthDto.Token);
+            return Ok(token);
         }
 
         [AllowAnonymous]

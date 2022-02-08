@@ -53,6 +53,7 @@ namespace EnglishApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Add(TagDto tagDto)
         {
             if (ModelState.IsValid)
@@ -69,6 +70,7 @@ namespace EnglishApi.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             await _tagService.DeleteAsync(id);
@@ -76,6 +78,7 @@ namespace EnglishApi.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Update(TagDto tagDto)
         {
             if (ModelState.IsValid)
