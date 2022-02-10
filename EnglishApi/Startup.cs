@@ -34,7 +34,7 @@ namespace EnglishApi
 {
     public class Startup
     {
-        public const string STATIC_FILE_FOLDER = "StaticFiles";
+        public string StaticFileFolder { get; }
         public IConfiguration Configuration { get; }
         public string ConnectionString { get; }
         public string JwtValidIssuer { get; }
@@ -70,6 +70,7 @@ namespace EnglishApi
             GoogleClientId = Configuration["Authentication:Google:ClientId"];
             GoogleClientSecret = Configuration["Authentication:Google:ClientSecret"];
 
+            StaticFileFolder = Configuration["StaticFilesOptions:MainFolder"];
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -198,8 +199,8 @@ namespace EnglishApi
             app.UseStaticFiles();
             app.UseStaticFiles(new StaticFileOptions()
             {
-                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), STATIC_FILE_FOLDER)),
-                RequestPath = new PathString($"/{STATIC_FILE_FOLDER}")
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), StaticFileFolder)),
+                RequestPath = new PathString($"/{StaticFileFolder}")
             });
 
             app.UseHttpsRedirection();

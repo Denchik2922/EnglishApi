@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BLL.Exceptions;
 using BLL.Interfaces.Entities;
+using BLL.RequestFeatures;
+using BLL.ServiceExtensions;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -20,7 +22,16 @@ namespace BLL.Services.Entities
 
         public async Task<ICollection<Tag>> GetAllAsync()
         {
-            return await _context.Tags.ToListAsync();
+            return await _context.Tags
+                                 .ToListAsync();
+        }
+
+        public override async Task<PagedList<Tag>> GetAllAsync(PaginationParameters parameters)
+        {
+            var tags = _dbSet.SearchAndSort(parameters);
+
+            return await PagedList<Tag>
+                            .ToPagedList(tags, parameters.PageNumber, parameters.PageSize);
         }
 
         public override async Task<Tag> GetByIdAsync(int id)

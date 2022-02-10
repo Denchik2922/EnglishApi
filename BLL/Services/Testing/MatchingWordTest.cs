@@ -98,7 +98,8 @@ namespace BLL.Services.Testing
                 paramCheck.TrueAnswer = String.Join(", ", currentTranslates);
             }
 
-            paramCheck.Parameters.Score = (paramCheck.Parameters.TrueAnswers / paramCheck.Parameters.CountQuestion) * 100;
+            double score = (paramCheck.Parameters.TrueAnswers / paramCheck.Parameters.CountQuestion) * 100;
+            paramCheck.Parameters.Score = Math.Round(score, 2);
             return paramCheck;
         }
     }

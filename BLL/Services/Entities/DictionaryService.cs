@@ -22,8 +22,8 @@ namespace BLL.Services.Entities
         public override async Task<PagedList<EnglishDictionary>> GetAllAsync(PaginationParameters parameters)
         {
             var dictionaries = GetDictionariesQueryable()
-                               .Search(parameters.SearchTerm)
-                               .SearchByTags(parameters.SearchTags);
+                               .SearchByTags(parameters.SearchTags)
+                               .SearchAndSort(parameters);
 
             return await PagedList<EnglishDictionary>
                             .ToPagedList(dictionaries, parameters.PageNumber, parameters.PageSize);
@@ -33,8 +33,8 @@ namespace BLL.Services.Entities
         {
             var dictionaries = GetDictionariesQueryable()
                                .Where(d => d.IsPrivate == false)
-                               .Search(parameters.SearchTerm)
-                               .SearchByTags(parameters.SearchTags);
+                               .SearchByTags(parameters.SearchTags)
+                               .SearchAndSort(parameters);
 
             return await PagedList<EnglishDictionary>
                             .ToPagedList(dictionaries, parameters.PageNumber, parameters.PageSize);
@@ -44,8 +44,8 @@ namespace BLL.Services.Entities
         {
             var dictionaries = GetDictionariesQueryable()
                                .Where(d => d.IsPrivate && d.UserId == userId)
-                               .Search(parameters.SearchTerm)
-                               .SearchByTags(parameters.SearchTags);
+                               .SearchByTags(parameters.SearchTags)
+                               .SearchAndSort(parameters);
 
             return await PagedList<EnglishDictionary>
                             .ToPagedList(dictionaries, parameters.PageNumber, parameters.PageSize);
