@@ -6,6 +6,7 @@ using Models.Entities;
 using Models.Tests;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Testing
@@ -51,17 +52,20 @@ namespace BLL.Services.Testing
             }
 
             var currentWord = word.Name.ToLowerInvariant();
+            
+            var userAnswer = Regex.Replace(answerParameters.Answer.Trim().ToLowerInvariant(), " {1,}", " " );
+
             var paramCheck = new ParamsForCheck();
             paramCheck.Parameters = answerParameters.Parameters;
 
-            if (currentWord.Contains(answerParameters.Answer.ToLowerInvariant()))
+            if (currentWord.Contains(userAnswer))
             {
                 paramCheck.IsTrueAnswer = true;
                 paramCheck.Parameters.TrueAnswers++;
             }
             else
             {
-                paramCheck.TrueAnswer = currentWord;
+                paramCheck.TrueAnswer = word.Name;
             }
 
             double score = (paramCheck.Parameters.TrueAnswers / paramCheck.Parameters.CountQuestion) * 100;

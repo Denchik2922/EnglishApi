@@ -1,6 +1,7 @@
 ﻿using BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -21,14 +22,25 @@ namespace EnglishApi.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload()
         {
-            var file = Request.Form.Files[0];
+            string pathOfFile = "";
+            var formCollection = await Request.ReadFormAsync();
+            var file = formCollection.Files.First();
+
             if (file.Length > 0)
             {
                 var userName = User.Identity.Name;
                 var fileName = userName + ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                string pathOfFile = await _imagesService.Upload(file, fileName);
+
+                pathOfFile = await _imagesService.UploadByAzure(file, fileName);
+
+                if (string.IsNullOrEmpty(pathOfFile))
+                {
+                    pathOfFile = await _imagesService.Upload(file, fileName);
+                }
+
                 return Ok(pathOfFile);
             }
+
             return BadRequest("File length must be longer than 0!");
         }
     }

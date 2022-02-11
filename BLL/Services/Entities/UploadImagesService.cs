@@ -1,4 +1,6 @@
-﻿using BLL.Interfaces.Entities;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using BLL.Interfaces.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.IO;
@@ -9,29 +11,46 @@ namespace BLL.Services.Entities
     public class UploadImagesService : IUploadImagesService
     {
         private string _imagePath;
+        private string _baseUrl;
+        private readonly string _azureConnectionString;
 
         public UploadImagesService(IConfiguration config)
         {
             _imagePath = config["StaticFilesOptions:PathForImage"];
+            _baseUrl = config["StaticFilesOptions:BaseUrl"];
+            _azureConnectionString = config.GetConnectionString("AzureConnectionString");
         }
 
         public async Task<string> Upload(IFormFile file, string fileName)
         {
             var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), _imagePath);
-            if (file.Length > 0)
+            var fullPath = Path.Combine(pathToSave, fileName);
+            var dbPath = Path.Combine(_imagePath, fileName);
+            using (var stream = new FileStream(fullPath, FileMode.Create))
             {
-                var fullPath = Path.Combine(pathToSave, fileName);
-                var dbPath = Path.Combine(_imagePath, fileName);
-                using (var stream = new FileStream(fullPath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-                return dbPath;
+                await file.CopyToAsync(stream);
             }
-            else
+            return _baseUrl + dbPath;
+        }
+
+        public async Task<string> UploadByAzure(IFormFile file, string fileName)
+        {
+            var container = new BlobContainerClient(_azureConnectionString, "upload-container");
+            var createResponse = await container.CreateIfNotExistsAsync();
+            if (createResponse != null && createResponse.GetRawResponse().Status == 201)
             {
-                throw new FileLoadException("File length must be longer than 0!");
+                await container.SetAccessPolicyAsync(PublicAccessType.Blob);
             }
+
+            var blob = container.GetBlobClient(fileName);
+            await blob.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots);
+
+            using (var fileStream = file.OpenReadStream())
+            {
+                await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = file.ContentType });
+            }
+
+            return blob.Uri.ToString();
         }
     }
 }
