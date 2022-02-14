@@ -12,8 +12,7 @@ namespace Models.Entities
         public User Creator { get; set; }
         public ICollection<EnglishDictionaryTag> Tags { get; set; } = new List<EnglishDictionaryTag>();
         public ICollection<Word> Words { get; set; } = new List<Word>();
-        public ICollection<ResultForSpellingTest> SpellingTestResults { get; set; } = new List<ResultForSpellingTest>();
-        public ICollection<ResultForMatchingTest> MatchingTestResults { get; set; } = new List<ResultForMatchingTest>();
+        public ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
         public bool IsPrivate { get; set; }
     }
 }

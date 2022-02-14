@@ -24,7 +24,6 @@ namespace BLL.Tests.Infrastructure.Helpers
             Context.AddRange(TagHelper.GetMany());
             Context.AddRange(DictionaryHelper.GetMany());
             Context.AddRange(EnglishDictionaryTagHelper.GetMany());
-            Context.AddRange(TestResultHelper.GetMany());
             Context.AddRange(TranslatedWordHelper.GetMany());
             Context.AddRange(UserHelper.GetMany());
             Context.AddRange(WordHelper.GetMany());

@@ -9,7 +9,6 @@ namespace Models.Entities
         public string RefreshToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
         public ICollection<EnglishDictionary> EnglishDictionaries { get; set; } = new List<EnglishDictionary>();
-        public ICollection<ResultForSpellingTest> SpellingTestResults { get; set; } = new List<ResultForSpellingTest>();
-        public ICollection<ResultForMatchingTest> MatchingTestResults { get; set; } = new List<ResultForMatchingTest>();
+        public ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
     }
 }

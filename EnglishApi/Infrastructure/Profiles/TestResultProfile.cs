@@ -10,13 +10,9 @@ namespace EnglishApi.Infrastructure.Profiles
     {
         public TestResultProfile()
         {
-            CreateMap<TestResultDto, ResultForSpellingTest>();
-            CreateMap<TestResultDto, ResultForMatchingTest>();
-
-            CreateMap<ResultForMatchingTest, UserTestDto>();
-            CreateMap<ResultForMatchingTest, DictionaryTestDto>();
-            CreateMap<ResultForSpellingTest, UserTestDto>();
-            CreateMap<ResultForSpellingTest, DictionaryTestDto>();
+            CreateMap<TypeOfTestingDto, TypeOfTesting>();
+            CreateMap<TypeOfTesting, TypeOfTestingDto>();
+            CreateMap<TestResultDto, TestResult>();
         }
     }
 }

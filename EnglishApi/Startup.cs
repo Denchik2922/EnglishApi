@@ -158,9 +158,10 @@ namespace EnglishApi
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IGenerateWordService, GenerateWordService>();
-            services.AddScoped(typeof(ITestResultService<>), typeof(TestResultService<>));
+            services.AddScoped<ITestResultService, TestResultService>();
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IUploadImagesService, UploadImagesService>();
+            services.AddScoped<ITypeOfTestingService, TypeOfTestingService>();
 
             //Http Services
             services.AddScoped<IHttpPhotoApiService, HttpPhotoApiService>();

@@ -68,10 +68,10 @@ namespace EnglishApi.Controllers
 
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DictionaryDetailsDto>> GetById(int id)
+        public async Task<ActionResult<DictionaryDto>> GetById(int id)
         {
             var dictionary = await _dictionaryService.GetByIdIncludeAsync(id);
-            DictionaryDetailsDto dictionaryDto = _mapper.Map<DictionaryDetailsDto>(dictionary);
+            DictionaryDto dictionaryDto = _mapper.Map<DictionaryDto>(dictionary);
 
             var authorizationResult = await _authorizationService
                     .AuthorizeAsync(User, dictionary, "GetDictionaryPolicy");

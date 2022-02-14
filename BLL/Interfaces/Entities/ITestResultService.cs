@@ -1,10 +1,10 @@
-﻿using Models.Entities.Interfaces;
+﻿using Models.Entities;
 using System.Threading.Tasks;
 
 namespace BLL.Interfaces.Entities
 {
-    public interface ITestResultService<T> : IBaseGenericService<T> where T : class, IResultTest
+    public interface ITestResultService : IBaseGenericService<TestResult>
     {
-        Task<T> GetByIdAsync(string UserId, int DictionaryId);
+        Task CheckUpdateOrAddResult(TestResult testResult);
     }
 }

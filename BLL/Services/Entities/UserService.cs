@@ -40,10 +40,7 @@ namespace BLL.Services.Entities
         {
             return _context.Users
                             .Include(u => u.EnglishDictionaries)
-                            .Include(u => u.SpellingTestResults)
-                                .ThenInclude(r => r.EnglishDictionary)
-                            .Include(u => u.MatchingTestResults)
-                                .ThenInclude(r => r.EnglishDictionary)
+                            .Include(u => u.TestResults)
                             .AsSplitQuery();
         }
     }

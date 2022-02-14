@@ -16,14 +16,13 @@ namespace EnglishApi.Controllers
     public class MatchingTestController : ControllerBase
     {
         private readonly IMatchingWordTest _matchingTest;
-
+        private readonly ITestResultService _testService;
         private readonly IMapper _mapper;
-        private readonly ITestResultService<ResultForMatchingTest> _testService;
         public MatchingTestController(IMapper mapper,
-            IMatchingWordTest matchingTest, ITestResultService<ResultForMatchingTest> testService)
+            IMatchingWordTest matchingTest, ITestResultService testService)
         {
-            _matchingTest = matchingTest;
             _testService = testService;
+            _matchingTest = matchingTest;
             _mapper = mapper;
         }
 
@@ -54,17 +53,8 @@ namespace EnglishApi.Controllers
         [Route("finish-test")]
         public async Task<IActionResult> FinishTest(TestResultDto testResult)
         {
-            var test = _mapper.Map<ResultForMatchingTest>(testResult);
-            var result = await _testService.GetByIdAsync(test.UserId, test.EnglishDictionaryId);
-            if (result == null)
-            {
-                await _testService.AddAsync(test);
-            }
-            else
-            {
-                result.Score = test.Score;
-                await _testService.UpdateAsync(result);
-            }
+            var test = _mapper.Map<TestResult>(testResult);
+            await _testService.CheckUpdateOrAddResult(test);
             return Ok();
         }
     }
