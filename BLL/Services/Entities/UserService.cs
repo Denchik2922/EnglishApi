@@ -1,6 +1,7 @@
 ﻿using BLL.Exceptions;
 using BLL.Interfaces.Entities;
 using BLL.RequestFeatures;
+using BLL.ServiceExtensions;
 using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
@@ -19,8 +20,11 @@ namespace BLL.Services.Entities
 
         public virtual async Task<PagedList<User>> GetAllAsync(PaginationParameters parameters)
         {
+            var users = _context.Users
+                        .Search(parameters.SearchTerm)
+                        .Sort(parameters.OrderBy);
             return await PagedList<User>
-                         .ToPagedList(_context.Users, parameters.PageNumber, parameters.PageSize);
+                         .ToPagedList(users, parameters.PageNumber, parameters.PageSize);
         }
 
         public async Task<User> GetByIdAsync(string userId)

@@ -39,10 +39,10 @@ namespace BLL.ServiceExtensions
             return dictionaries.Where(d => d.Tags.Any(t => tags.Contains(t.Tag.Name)));
         }
 
-        public static IQueryable<T> Sort<T>(this IQueryable<T> list, string orderByQueryString) where T : class, IEntity
+        public static IQueryable<T> Sort<T>(this IQueryable<T> list, string orderByQueryString) where T : class
         {
             if (string.IsNullOrWhiteSpace(orderByQueryString))
-                return list.OrderBy(l => l.Name);
+                return list.OrderBy(l => l);
 
             var orderParams = orderByQueryString.Trim().Split(',');
             var propertyInfos = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
@@ -65,7 +65,7 @@ namespace BLL.ServiceExtensions
 
             var orderQuery = orderQueryBuilder.ToString().TrimEnd(',', ' ');
             if (string.IsNullOrWhiteSpace(orderQuery))
-                return list.OrderBy(e => e.Name);
+                return list.OrderBy(e => e);
 
             return list.OrderBy(orderQuery);
         }
