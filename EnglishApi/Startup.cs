@@ -6,9 +6,9 @@ using BLL.Services.HttpApi;
 using BLL.Services.Testing;
 using DAL;
 using EnglishApi.Infrastructure.AuthorizationHandlers;
+using EnglishApi.Infrastructure.Helpers;
 using EnglishApi.Infrastructure.Profiles;
 using EnglishApi.Middleware;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -27,7 +27,6 @@ using Models.Entities;
 using Serilog;
 using System;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace EnglishApi
@@ -108,12 +107,14 @@ namespace EnglishApi
                options.UseSqlServer(ConnectionString));
 
             //Identity setting
-            services.AddIdentity<User, IdentityRole>()
-               .AddEntityFrameworkStores<EnglishContext>();
+            services.AddIdentity<User, CustomRole>()
+               .AddEntityFrameworkStores<EnglishContext>()
+               .AddTokenProvider<DataProtectorTokenProvider<User>>(TokenOptions.DefaultProvider);
 
             services.Configure<IdentityOptions>(options =>
             {
                 options.User.RequireUniqueEmail = true;
+                options.User.AllowedUserNameCharacters = null;
             });
 
             //Configure jwt authentication
@@ -186,8 +187,10 @@ namespace EnglishApi
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, UserManager<User> userManager)
         {
+            DbInitializerHelper.SeedAdmins(userManager, Configuration);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

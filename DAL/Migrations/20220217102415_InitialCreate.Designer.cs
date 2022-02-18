@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(EnglishContext))]
-    [Migration("20220113144544_AdditionalUserFiledsForRefreshToken")]
-    partial class AdditionalUserFiledsForRefreshToken
+    [Migration("20220217102415_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,49 +20,6 @@ namespace DAL.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.13")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "15c1a746-95eb-4408-8672-c34e23f1791b",
-                            ConcurrencyStamp = "cec8de1e-b29b-4bf4-9f76-fdcb8819729d",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "2d0cf9e1-42c5-4373-a3fc-47eb241a1558",
-                            ConcurrencyStamp = "eb7ffc5f-1a9a-4280-8b11-3b908bff056c",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        });
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -134,21 +91,6 @@ namespace DAL.Migrations
                     b.ToTable("AspNetUserLogins");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
@@ -166,6 +108,71 @@ namespace DAL.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("Models.Entities.CustomRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "9a8f0f1c-ed90-4482-93ae-9aae7037faf2",
+                            ConcurrencyStamp = "85ab00f0-2fb2-452c-a6d7-3688d3c96813",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "4c57a021-3dd8-4923-8042-9c68c6c38758",
+                            ConcurrencyStamp = "9e89c149-11be-4d6c-bcef-c28f629f3169",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "3cb8605a-8c2b-4aeb-b20b-53f2cf4d4c58",
+                            ConcurrencyStamp = "92d32ca6-faf7-40de-a701-3843a1513168",
+                            Name = "SuperAdmin",
+                            NormalizedName = "SUPERADMIN"
+                        });
+                });
+
+            modelBuilder.Entity("Models.Entities.CustomUserRole", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles");
                 });
 
             modelBuilder.Entity("Models.Entities.EnglishDictionary", b =>
@@ -213,42 +220,6 @@ namespace DAL.Migrations
                     b.ToTable("EnglishDictionaryTag");
                 });
 
-            modelBuilder.Entity("Models.Entities.ResultForMatchingTest", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EnglishDictionaryId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Score")
-                        .HasColumnType("float");
-
-                    b.HasKey("UserId", "EnglishDictionaryId");
-
-                    b.HasIndex("EnglishDictionaryId");
-
-                    b.ToTable("ResultForMatchingTests");
-                });
-
-            modelBuilder.Entity("Models.Entities.ResultForSpellingTest", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("EnglishDictionaryId")
-                        .HasColumnType("int");
-
-                    b.Property<double>("Score")
-                        .HasColumnType("float");
-
-                    b.HasKey("UserId", "EnglishDictionaryId");
-
-                    b.HasIndex("EnglishDictionaryId");
-
-                    b.ToTable("ResultForSpellingTests");
-                });
-
             modelBuilder.Entity("Models.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -285,6 +256,39 @@ namespace DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Models.Entities.TestResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EnglishDictionaryId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Score")
+                        .HasColumnType("float");
+
+                    b.Property<int>("TypeOfTestingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnglishDictionaryId");
+
+                    b.HasIndex("TypeOfTestingId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TestResults");
+                });
+
             modelBuilder.Entity("Models.Entities.TranslatedWord", b =>
                 {
                     b.Property<int>("Id")
@@ -305,6 +309,21 @@ namespace DAL.Migrations
                     b.HasIndex("WordId");
 
                     b.ToTable("TranslatedWords");
+                });
+
+            modelBuilder.Entity("Models.Entities.TypeOfTesting", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TypeOfTestings");
                 });
 
             modelBuilder.Entity("Models.Entities.User", b =>
@@ -413,7 +432,7 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Models.Entities.CustomRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -438,21 +457,6 @@ namespace DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Models.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.HasOne("Models.Entities.User", null)
@@ -460,6 +464,25 @@ namespace DAL.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Models.Entities.CustomUserRole", b =>
+                {
+                    b.HasOne("Models.Entities.CustomRole", "Role")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Models.Entities.User", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Models.Entities.EnglishDictionary", b =>
@@ -490,40 +513,27 @@ namespace DAL.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("Models.Entities.ResultForMatchingTest", b =>
+            modelBuilder.Entity("Models.Entities.TestResult", b =>
                 {
                     b.HasOne("Models.Entities.EnglishDictionary", "EnglishDictionary")
-                        .WithMany("MatchingTestResults")
+                        .WithMany("TestResults")
                         .HasForeignKey("EnglishDictionaryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Models.Entities.User", "User")
-                        .WithMany("MatchingTestResults")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("EnglishDictionary");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Models.Entities.ResultForSpellingTest", b =>
-                {
-                    b.HasOne("Models.Entities.EnglishDictionary", "EnglishDictionary")
-                        .WithMany("SpellingTestResults")
-                        .HasForeignKey("EnglishDictionaryId")
+                    b.HasOne("Models.Entities.TypeOfTesting", "Type")
+                        .WithMany("TestResults")
+                        .HasForeignKey("TypeOfTestingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Models.Entities.User", "User")
-                        .WithMany("SpellingTestResults")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("TestResults")
+                        .HasForeignKey("UserId");
 
                     b.Navigation("EnglishDictionary");
+
+                    b.Navigation("Type");
 
                     b.Navigation("User");
                 });
@@ -550,13 +560,16 @@ namespace DAL.Migrations
                     b.Navigation("Dictionary");
                 });
 
+            modelBuilder.Entity("Models.Entities.CustomRole", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
             modelBuilder.Entity("Models.Entities.EnglishDictionary", b =>
                 {
-                    b.Navigation("MatchingTestResults");
-
-                    b.Navigation("SpellingTestResults");
-
                     b.Navigation("Tags");
+
+                    b.Navigation("TestResults");
 
                     b.Navigation("Words");
                 });
@@ -566,13 +579,18 @@ namespace DAL.Migrations
                     b.Navigation("EnglishDictionaries");
                 });
 
+            modelBuilder.Entity("Models.Entities.TypeOfTesting", b =>
+                {
+                    b.Navigation("TestResults");
+                });
+
             modelBuilder.Entity("Models.Entities.User", b =>
                 {
                     b.Navigation("EnglishDictionaries");
 
-                    b.Navigation("MatchingTestResults");
+                    b.Navigation("TestResults");
 
-                    b.Navigation("SpellingTestResults");
+                    b.Navigation("UserRoles");
                 });
 
             modelBuilder.Entity("Models.Entities.Word", b =>

@@ -1,24 +1,35 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Models.Entities;
 
 namespace DAL.Configurations
 {
-    public class RoleConfig : IEntityTypeConfiguration<IdentityRole>
+    public class RoleConfig : IEntityTypeConfiguration<CustomRole>
     {
-        public void Configure(EntityTypeBuilder<IdentityRole> builder)
+        public void Configure(EntityTypeBuilder<CustomRole> builder)
         {
+            builder.HasMany(e => e.UserRoles)
+                .WithOne(e => e.Role)
+                .HasForeignKey(ur => ur.RoleId)
+                .IsRequired();
+
             builder.HasData(
-            new IdentityRole
+            new CustomRole
             {
                 Name = "User",
                 NormalizedName = "USER"
             },
-            new IdentityRole
+            new CustomRole
             {
                 Name = "Admin",
                 NormalizedName = "ADMIN"
+            },
+            new CustomRole
+            {
+                Name = "SuperAdmin",
+                NormalizedName = "SUPERADMIN"
             });
+
         }
     }
 }

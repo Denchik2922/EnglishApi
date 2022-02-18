@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace EnglishApi.Dto.UserDtos
 {
-    public class UserDto
+    public class EditUserDto
     {
         public string Id { get; set; }
         public string UserName { get; set; }

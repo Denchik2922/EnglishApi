@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DAL.Migrations
 {
@@ -26,6 +26,8 @@ namespace DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RefreshTokenExpiryTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -58,6 +60,19 @@ namespace DAL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tags", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TypeOfTestings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TypeOfTestings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -213,51 +228,36 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ResultForMatchingTests",
+                name: "TestResults",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     EnglishDictionaryId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Score = table.Column<double>(type: "float", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    TypeOfTestingId = table.Column<int>(type: "int", nullable: false),
+                    Score = table.Column<double>(type: "float", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ResultForMatchingTests", x => new { x.UserId, x.EnglishDictionaryId });
+                    table.PrimaryKey("PK_TestResults", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ResultForMatchingTests_AspNetUsers_UserId",
+                        name: "FK_TestResults_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ResultForMatchingTests_EnglishDictionaries_EnglishDictionaryId",
+                        name: "FK_TestResults_EnglishDictionaries_EnglishDictionaryId",
                         column: x => x.EnglishDictionaryId,
                         principalTable: "EnglishDictionaries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ResultForSpellingTests",
-                columns: table => new
-                {
-                    EnglishDictionaryId = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Score = table.Column<double>(type: "float", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ResultForSpellingTests", x => new { x.UserId, x.EnglishDictionaryId });
                     table.ForeignKey(
-                        name: "FK_ResultForSpellingTests_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ResultForSpellingTests_EnglishDictionaries_EnglishDictionaryId",
-                        column: x => x.EnglishDictionaryId,
-                        principalTable: "EnglishDictionaries",
+                        name: "FK_TestResults_TypeOfTestings_TypeOfTestingId",
+                        column: x => x.TypeOfTestingId,
+                        principalTable: "TypeOfTestings",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -310,8 +310,9 @@ namespace DAL.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3f183f84-82e5-4c42-8c79-b391e6127e5c", "797dd32d-b444-4d2f-95ad-9a4b64041b0f", "User", "USER" },
-                    { "dda23481-1e77-45d9-8b2e-aea3649bae76", "5b726df2-1d7c-4292-806a-83b2d72b20e0", "Admin", "ADMIN" }
+                    { "9a8f0f1c-ed90-4482-93ae-9aae7037faf2", "85ab00f0-2fb2-452c-a6d7-3688d3c96813", "User", "USER" },
+                    { "4c57a021-3dd8-4923-8042-9c68c6c38758", "9e89c149-11be-4d6c-bcef-c28f629f3169", "Admin", "ADMIN" },
+                    { "3cb8605a-8c2b-4aeb-b20b-53f2cf4d4c58", "92d32ca6-faf7-40de-a701-3843a1513168", "SuperAdmin", "SUPERADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -373,14 +374,19 @@ namespace DAL.Migrations
                 column: "TagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ResultForMatchingTests_EnglishDictionaryId",
-                table: "ResultForMatchingTests",
+                name: "IX_TestResults_EnglishDictionaryId",
+                table: "TestResults",
                 column: "EnglishDictionaryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ResultForSpellingTests_EnglishDictionaryId",
-                table: "ResultForSpellingTests",
-                column: "EnglishDictionaryId");
+                name: "IX_TestResults_TypeOfTestingId",
+                table: "TestResults",
+                column: "TypeOfTestingId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TestResults_UserId",
+                table: "TestResults",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TranslatedWords_WordId",
@@ -414,10 +420,7 @@ namespace DAL.Migrations
                 name: "EnglishDictionaryTag");
 
             migrationBuilder.DropTable(
-                name: "ResultForMatchingTests");
-
-            migrationBuilder.DropTable(
-                name: "ResultForSpellingTests");
+                name: "TestResults");
 
             migrationBuilder.DropTable(
                 name: "TranslatedWords");
@@ -427,6 +430,9 @@ namespace DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Tags");
+
+            migrationBuilder.DropTable(
+                name: "TypeOfTestings");
 
             migrationBuilder.DropTable(
                 name: "Words");
