@@ -30,7 +30,7 @@ namespace BLL.Services.Entities
                 user = await _userManager.FindByEmailAsync(payload.Email);
                 if (user == null)
                 {
-                    user = new User { Email = payload.Email, UserName = payload.Name };
+                    user = new User { Email = payload.Email, UserName = payload.Email };
                     await _userManager.CreateAsync(user);
 
                     await _userManager.AddToRoleAsync(user, USER_ROLE);

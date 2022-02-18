@@ -1,11 +1,15 @@
 ﻿using DAL.Configurations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 
 namespace DAL
 {
-    public class EnglishContext : IdentityDbContext<User>
+    public class EnglishContext : IdentityDbContext<
+        User, CustomRole, string,
+        IdentityUserClaim<string>, CustomUserRole, IdentityUserLogin<string>,
+        IdentityRoleClaim<string>, IdentityUserToken<string>>
     {
         public EnglishContext(DbContextOptions<EnglishContext> options) : base(options) { }
 
@@ -28,6 +32,7 @@ namespace DAL
             modelBuilder.ApplyConfiguration(new TestResultConfig());
             modelBuilder.ApplyConfiguration(new TranslatedWordConfig());
             modelBuilder.ApplyConfiguration(new WordConfig());
+            modelBuilder.ApplyConfiguration(new UserConfig());
         }
 
     }
