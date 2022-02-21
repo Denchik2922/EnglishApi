@@ -14,7 +14,8 @@ namespace DAL.Configurations
             builder.Property(dic => dic.Description).HasMaxLength(300);
             builder.HasOne(d => d.Creator)
                 .WithMany(u => u.EnglishDictionaries)
-                .HasForeignKey(d => d.UserId);
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

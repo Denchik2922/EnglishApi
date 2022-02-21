@@ -5,6 +5,6 @@ namespace BLL.Interfaces.HttpApi
 {
     public interface IHttpWordApiService
     {
-        Task<WordPhonetic> GetPhoneticByWord(string word);
+        Task<WordExtraInfo> GetExtraInfoByWord(string word);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using BLL.Interfaces.HttpApi;
 using Models.Apis;
-
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BLL.Services.HttpApi
@@ -19,18 +19,21 @@ namespace BLL.Services.HttpApi
             _wordApi = wordApi;
         }
 
-        public async Task<WordInformation> GenerateInfoByWord(string wordName)
+        public async Task<WordFullInformation> GenerateInfoByWord(string wordName)
         {
-            var phonetic = await _wordApi.GetPhoneticByWord(wordName);
-            var photos = await _photoApi.GetPhotosByWord(wordName);
-            var translate = await _translateApi.GetTranslatedWord(wordName);
+            ICollection<WordPhoto> photos = await _photoApi.GetPhotosByWord(wordName);
+            string translate = await _translateApi.GetTranslatedWord(wordName);
 
-            return new WordInformation()
+            var extraInfo = await _wordApi.GetExtraInfoByWord(wordName);
+            WordPhonetic phonetic = extraInfo.WordPhonetic;
+
+            return new WordFullInformation()
             {
                 PictureUrls = photos,
                 Translate = translate,
                 Transcription = phonetic.Text,
-                AudioUrl = phonetic.Audio
+                AudioUrl = phonetic.Audio,
+                WordExamples = extraInfo.WordExamples
             };
         }
     }

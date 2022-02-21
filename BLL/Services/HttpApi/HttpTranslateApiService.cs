@@ -9,6 +9,7 @@ namespace BLL.Services.HttpApi
 {
     public class HttpTranslateApiService : IHttpTranslateApiService
     {
+        private const string CLIENT_NAME = "TranslateClient";
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _apiTarget;
         private readonly string _apiSource;
@@ -24,7 +25,7 @@ namespace BLL.Services.HttpApi
         public async Task<string> GetTranslatedWord(string word)
         {
             string translatedWord = "";
-            var httpClient = _httpClientFactory.CreateClient("TranslateClient");
+            var httpClient = _httpClientFactory.CreateClient(CLIENT_NAME);
 
             var request = new HttpRequestMessage
             {

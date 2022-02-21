@@ -16,6 +16,7 @@ namespace DAL
         public DbSet<EnglishDictionary> EnglishDictionaries { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<TranslatedWord> TranslatedWords { get; set; }
+        public DbSet<WordExample> WordExamples { get; set; }
         public DbSet<Word> Words { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<TypeOfTesting> TypeOfTestings { get; set; }
