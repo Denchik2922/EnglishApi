@@ -11,6 +11,7 @@ namespace BLL.Services.HttpApi
 {
     public class HttpPhotoApiService : IHttpPhotoApiService
     {
+        private const string CLIENT_NAME = "PhotoApiClient";
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly string _apiKey;
         private readonly string _apiPerPage;
@@ -26,7 +27,7 @@ namespace BLL.Services.HttpApi
 
         public async Task<ICollection<WordPhoto>> GetPhotosByWord(string word)
         {
-            var httpClient = _httpClientFactory.CreateClient("PhotoApiClient");
+            var httpClient = _httpClientFactory.CreateClient(CLIENT_NAME);
             ICollection<WordPhoto> wordPhotos = new List<WordPhoto>();
             var query = new Dictionary<string, string>
             {

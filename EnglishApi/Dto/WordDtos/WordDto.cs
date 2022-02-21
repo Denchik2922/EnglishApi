@@ -1,4 +1,5 @@
-﻿using EnglishApi.Dto.TranslatesDtos;
+﻿using EnglishApi.Dto.ExamplesWordDtos;
+using EnglishApi.Dto.TranslatesDtos;
 using EnglishApi.Infrastructure.Validations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,6 +16,10 @@ namespace EnglishApi.Dto.WordDtos
         [Required]
         [EnsureMinimumElements(1, ErrorMessage = "At least a Translates is required")]
         public ICollection<TranslatedWordDto> Translates { get; set; }
+
+        [Required]
+        [EnsureMinimumElements(1, ErrorMessage = "At least a ExampleWords is required")]
+        public ICollection<ExampleWordDto> WordExamples { get; set; }
 
         [Required]
         public int EnglishDictionaryId { get; set; }

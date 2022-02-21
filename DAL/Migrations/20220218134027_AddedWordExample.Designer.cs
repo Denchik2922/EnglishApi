@@ -4,14 +4,16 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DAL.Migrations
 {
     [DbContext(typeof(EnglishContext))]
-    partial class EnglishContextModelSnapshot : ModelSnapshot
+    [Migration("20220218134027_AddedWordExample")]
+    partial class AddedWordExample
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,22 +139,22 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "afc4a156-7f70-409f-bb0e-670e7e7d6bbd",
-                            ConcurrencyStamp = "8b410704-515c-436b-b323-4775ee047de1",
+                            Id = "eb84d539-b80f-41f4-8337-1f02590a7623",
+                            ConcurrencyStamp = "d4857212-bbc5-4e53-b12b-938148385442",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "633997a3-7d92-4e27-bac9-3aba99a44bec",
-                            ConcurrencyStamp = "9a96ee3b-6fc5-4f21-a7ab-b5d45750d523",
+                            Id = "9d638384-df08-4b67-86b5-e4e5d23e91e5",
+                            ConcurrencyStamp = "d2fb5cfe-3103-41c6-87a4-6968a87206a8",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "b92a71f3-4ddf-42b2-a395-833f0fa9e351",
-                            ConcurrencyStamp = "f58821d2-e1f5-4a82-afe3-c0266884a7a1",
+                            Id = "94ba2739-fea3-4c54-bb8e-1d71bafb06c6",
+                            ConcurrencyStamp = "53529802-cd5e-4e66-998f-63ab607efb97",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
@@ -507,8 +509,7 @@ namespace DAL.Migrations
                 {
                     b.HasOne("Models.Entities.User", "Creator")
                         .WithMany("EnglishDictionaries")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Creator");
                 });

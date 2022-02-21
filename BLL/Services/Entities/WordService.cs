@@ -54,7 +54,9 @@ namespace BLL.Services.Entities
         {
             return _context.Words
                               .Include(w => w.Dictionary)
-                              .Include(w => w.Translates);
+                              .Include(w => w.WordExamples)
+                              .Include(w => w.Translates)
+                              .AsSplitQuery();
         }
 
         public override async Task AddAsync(Word entity)

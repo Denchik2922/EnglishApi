@@ -5,6 +5,6 @@ namespace BLL.Interfaces.HttpApi
 {
     public interface IGenerateWordService
     {
-        Task<WordInformation> GenerateInfoByWord(string wordName);
+        Task<WordFullInformation> GenerateInfoByWord(string wordName);
     }
 }
