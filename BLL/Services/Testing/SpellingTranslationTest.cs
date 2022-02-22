@@ -39,9 +39,10 @@ namespace BLL.Services.Testing
             return wordTranslates;
         }
 
-        public override async Task<ParamsForCheck> CheckQuestion(ParamsForAnswer answerParameters)
+        public override async Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters)
         {
             var questionTranslates = answerParameters.Question.Split(',');
+
             var word = await _context.Words
                                     .Include(w => w.Translates)
                                     .FirstOrDefaultAsync(w => w.Translates
@@ -50,15 +51,22 @@ namespace BLL.Services.Testing
             {
                 throw new ItemNotFoundException($"{typeof(TranslatedWord).Name} with name {answerParameters.Question} not found");
             }
-
-            var currentWord = word.Name.ToLowerInvariant();
             
             var userAnswer = Regex.Replace(answerParameters.Answer.Trim().ToLowerInvariant(), " {1,}", " " );
 
             var paramCheck = new ParamsForCheck();
             paramCheck.Parameters = answerParameters.Parameters;
 
-            if (currentWord.Contains(userAnswer))
+            CheckQuestion(paramCheck, word, userAnswer);
+
+            return paramCheck;
+        }
+
+        private void CheckQuestion(ParamsForCheck paramCheck, Word word, string userAnswer)
+        {
+            var currentWord = word.Name.ToLowerInvariant();
+
+            if (currentWord.Contains(userAnswer) && !String.IsNullOrEmpty(userAnswer))
             {
                 paramCheck.IsTrueAnswer = true;
                 paramCheck.Parameters.TrueAnswers++;
@@ -68,11 +76,7 @@ namespace BLL.Services.Testing
                 paramCheck.TrueAnswer = word.Name;
             }
 
-            double score = (paramCheck.Parameters.TrueAnswers / paramCheck.Parameters.CountQuestion) * 100;
-            paramCheck.Parameters.Score = Math.Round(score, 2);
-
-            return paramCheck;
+            paramCheck.Parameters.Score = GetCalculateScore(paramCheck.Parameters.TrueAnswers, paramCheck.Parameters.CountQuestion);
         }
-
     }
 }

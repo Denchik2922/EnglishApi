@@ -172,6 +172,7 @@ namespace EnglishApi
             //Testing Services
             services.AddScoped<IMatchingWordTest, MatchingWordTest>();
             services.AddScoped<ISpellingTranslationTest, SpellingTranslationTest>();
+            services.AddScoped<IAudioTranslateTest, AudioTranslateTest>();
 
 
             //Add AutoMapper

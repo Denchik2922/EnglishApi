@@ -3,6 +3,7 @@ using DAL;
 using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Tests;
+using System;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Testing
@@ -15,7 +16,7 @@ namespace BLL.Services.Testing
             _context = context;
         }
 
-        public async Task<TestParameters> StartTest(int dictionaryId)
+        public virtual async Task<TestParameters> StartTest(int dictionaryId)
         {
             var dictionary = await _context.EnglishDictionaries
                                             .Include(d => d.Words)
@@ -35,7 +36,13 @@ namespace BLL.Services.Testing
             };
         }
 
+        protected double GetCalculateScore(int CountTrueAnswers, int CountQustion)
+        {
+            double score = ((double)CountTrueAnswers / CountQustion) * 100;
+            return Math.Round(score, 2);
+        }
+
         public abstract Task<T> GetPartOfTest(TestParameters param);
-        public abstract Task<ParamsForCheck> CheckQuestion(ParamsForAnswer answerParameters);
+        public abstract Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters);
     }
 }
