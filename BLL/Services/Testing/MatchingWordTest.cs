@@ -19,12 +19,14 @@ namespace BLL.Services.Testing
         {
             var word = await GetWord(param.DictionaryId, param.CurrentQuestion, param.CountWord);
             var translates = await GetTranslates(word.Id, param.DictionaryId, word.Translates);
+
             var paramQuestion = new ParamsForMatchingQuestion()
             {
                 Parameters = param,
                 WordName = word.Name,
                 Translates = translates
             };
+
             return paramQuestion;
         }
 
@@ -73,21 +75,31 @@ namespace BLL.Services.Testing
             return translates;
         }
 
-        public override async Task<ParamsForCheck> CheckQuestion(ParamsForAnswer answerParameters)
+        public override async Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters)
         {
             var word = await _context.Words
                 .Include(w => w.Translates)
                 .FirstOrDefaultAsync(w => w.Name.ToLower().Contains(answerParameters.Question.ToLowerInvariant()));
+
             if (word == null)
             {
                 throw new ItemNotFoundException($"{typeof(Word).Name} with name {answerParameters.Question} not found");
             }
-            var currentTranslates = word.Translates.Select(t => t.Name);
+
+            var currentTranslates = word.Translates.Select(t => t.Name).ToList();
 
             var paramCheck = new ParamsForCheck();
             paramCheck.Parameters = answerParameters.Parameters;
-            var answerTranslates = answerParameters.Answer.Split(',');
 
+            var answerTranslates = answerParameters.Answer.Split(',').ToList();
+
+            CheckQuestion(paramCheck, currentTranslates, answerTranslates);
+
+            return paramCheck;
+        }
+
+        private void CheckQuestion(ParamsForCheck paramCheck, List<string> currentTranslates, List<string> answerTranslates)
+        {
             if (currentTranslates.Any(t => answerTranslates.Contains(t)))
             {
                 paramCheck.IsTrueAnswer = true;
@@ -98,9 +110,7 @@ namespace BLL.Services.Testing
                 paramCheck.TrueAnswer = String.Join(", ", currentTranslates);
             }
 
-            double score = (paramCheck.Parameters.TrueAnswers / paramCheck.Parameters.CountQuestion) * 100;
-            paramCheck.Parameters.Score = Math.Round(score, 2);
-            return paramCheck;
+            paramCheck.Parameters.Score = GetCalculateScore(paramCheck.Parameters.TrueAnswers, paramCheck.Parameters.CountQuestion);
         }
     }
 }

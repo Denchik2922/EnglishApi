@@ -45,7 +45,7 @@ namespace EnglishApi.Controllers
         [Route("check-answer")]
         public async Task<IActionResult> CheckAnswer(ParamsForAnswer testParameters)
         {
-            var test = await _spellingTest.CheckQuestion(testParameters);
+            var test = await _spellingTest.GetCheckParams(testParameters);
             return Ok(test);
         }
 

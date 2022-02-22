@@ -13,23 +13,23 @@ namespace EnglishApi.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class MatchingTestController : ControllerBase
+    public class AudioTestController : ControllerBase
     {
-        private readonly IMatchingWordTest _matchingTest;
+        private readonly IAudioTranslateTest _audioTest;
         private readonly ITestResultService _testService;
         private readonly IMapper _mapper;
-        public MatchingTestController(IMapper mapper,
-            IMatchingWordTest matchingTest, ITestResultService testService)
+        public AudioTestController(IMapper mapper,
+            IAudioTranslateTest audioTest, ITestResultService testService)
         {
             _testService = testService;
-            _matchingTest = matchingTest;
+            _audioTest = audioTest;
             _mapper = mapper;
         }
 
         [HttpGet("{Id}")]
         public async Task<ActionResult> StartTest(int Id)
         {
-            var test = await _matchingTest.StartTest(Id);
+            var test = await _audioTest.StartTest(Id);
             return Ok(test);
         }
 
@@ -37,7 +37,7 @@ namespace EnglishApi.Controllers
         [Route("part-of-test")]
         public async Task<IActionResult> GetTest(TestParameters testParameters)
         {
-            var test = await _matchingTest.GetPartOfTest(testParameters);
+            var test = await _audioTest.GetPartOfTest(testParameters);
             return Ok(test);
         }
 
@@ -45,7 +45,7 @@ namespace EnglishApi.Controllers
         [Route("check-answer")]
         public async Task<IActionResult> CheckAnswer(ParamsForAnswer testParameters)
         {
-            var test = await _matchingTest.GetCheckParams(testParameters);
+            var test = await _audioTest.GetCheckParams(testParameters);
             return Ok(test);
         }
 
