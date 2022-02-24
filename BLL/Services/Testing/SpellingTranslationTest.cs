@@ -11,14 +11,14 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Testing
 {
-    public class SpellingTranslationTest : BaseTestService<ParamsForTranslateQuestion>, ISpellingTranslationTest
+    public class SpellingTranslationTest : BaseTestService<TranslateQuestion>, ISpellingTranslationTest
     {
         public SpellingTranslationTest(EnglishContext context): base(context){}
 
-        public override async Task<ParamsForTranslateQuestion> GetPartOfTest(TestParameters param)
+        public override async Task<TranslateQuestion> GetPartOfTest(TestParameters param)
         {
             var translate = await GetTranslate(param.DictionaryId, param.CurrentQuestion, param.CountWord);
-            var paramQuestion = new ParamsForTranslateQuestion()
+            var paramQuestion = new TranslateQuestion()
             {
                 Parameters = param,
                 WordName = translate

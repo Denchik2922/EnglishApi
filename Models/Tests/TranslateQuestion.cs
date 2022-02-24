@@ -1,8 +1,8 @@
 ﻿namespace Models.Tests
 {
-    public class ParamsForAudioQuestion
+    public class TranslateQuestion
     {
         public TestParameters Parameters { get; set; }
-        public string AudioUrl { get; set; }
+        public string WordName { get; set; }
     }
 }

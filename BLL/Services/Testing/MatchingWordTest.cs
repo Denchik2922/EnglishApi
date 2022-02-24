@@ -11,16 +11,16 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Testing
 {
-    public class MatchingWordTest : BaseTestService<ParamsForMatchingQuestion>, IMatchingWordTest
+    public class MatchingWordTest : BaseTestService<MatchingQuestion>, IMatchingWordTest
     {
         public MatchingWordTest(EnglishContext context) : base(context){}
 
-        public override async Task<ParamsForMatchingQuestion> GetPartOfTest(TestParameters param)
+        public override async Task<MatchingQuestion> GetPartOfTest(TestParameters param)
         {
             var word = await GetWord(param.DictionaryId, param.CurrentQuestion, param.CountWord);
             var translates = await GetTranslates(word.Id, param.DictionaryId, word.Translates);
 
-            var paramQuestion = new ParamsForMatchingQuestion()
+            var paramQuestion = new MatchingQuestion()
             {
                 Parameters = param,
                 WordName = word.Name,

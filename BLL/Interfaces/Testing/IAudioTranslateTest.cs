@@ -2,5 +2,5 @@
 
 namespace BLL.Interfaces.Testing
 {
-    public interface IAudioTranslateTest : IBaseTestService<ParamsForAudioQuestion> {}
+    public interface IAudioTranslateTest : IBaseTestService<AudioQuestion> {}
 }

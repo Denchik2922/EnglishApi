@@ -2,5 +2,5 @@
 
 namespace BLL.Interfaces.Testing
 {
-    public interface ISpellingTranslationTest : IBaseTestService<ParamsForTranslateQuestion>{}
+    public interface ISpellingTranslationTest : IBaseTestService<TranslateQuestion>{}
 }

@@ -2,5 +2,5 @@
 
 namespace BLL.Interfaces.Testing
 {
-    public interface IMatchingWordTest : IBaseTestService<ParamsForMatchingQuestion> {}
+    public interface IMatchingWordTest : IBaseTestService<MatchingQuestion> {}
 }

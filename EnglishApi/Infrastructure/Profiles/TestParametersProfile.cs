@@ -7,8 +7,8 @@ namespace EnglishApi.Infrastructure.Profiles
     {
         public TestParametersProfile()
         {
-            CreateMap<TestParameters, ParamsForMatchingQuestion>();
-            CreateMap<TestParameters, ParamsForTranslateQuestion>();
+            CreateMap<TestParameters, MatchingQuestion>();
+            CreateMap<TestParameters, TranslateQuestion>();
             CreateMap<ParamsForAnswer, ParamsForCheck>();
         }
     }

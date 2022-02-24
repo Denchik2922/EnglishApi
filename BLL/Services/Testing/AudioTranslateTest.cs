@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace BLL.Services.Testing
 {
-    public class AudioTranslateTest: BaseTestService<ParamsForAudioQuestion>, IAudioTranslateTest
+    public class AudioTranslateTest: BaseTestService<AudioQuestion>, IAudioTranslateTest
     {
         public AudioTranslateTest(EnglishContext context) : base(context) { }
 
-        public override async Task<TestParameters> StartTest(int dictionaryId)
+        public override async Task<TestParameters> StartTest(int dictionaryId, int countWord = 1)
         {
             var dictionary = await _context.EnglishDictionaries
                                             .Include(d => d.Words)
@@ -26,23 +26,23 @@ namespace BLL.Services.Testing
                 throw new ItemNotFoundException($"{typeof(EnglishDictionary).Name} with id {dictionaryId} not found");
             }
 
-            var countWord = dictionary.Words.Count(w => !String.IsNullOrEmpty(w.AudioUrl));
+            var countQuestion = dictionary.Words.Count(w => !String.IsNullOrEmpty(w.AudioUrl));
 
             return new TestParameters()
             {
                 Score = 0,
                 TrueAnswers = 0,
-                CountQuestion = countWord,
+                CountQuestion = countQuestion,
                 DictionaryId = dictionaryId,
                 CurrentQuestion = 1,
-                CountWord = 1
+                CountWord = countWord
             };
         }
 
-        public override async Task<ParamsForAudioQuestion> GetPartOfTest(TestParameters param)
+        public override async Task<AudioQuestion> GetPartOfTest(TestParameters param)
         {
             var audio = await GetAudio(param.DictionaryId, param.CurrentQuestion, param.CountWord);
-            var paramQuestion = new ParamsForAudioQuestion()
+            var paramQuestion = new AudioQuestion()
             {
                 Parameters = param,
                 AudioUrl = audio
