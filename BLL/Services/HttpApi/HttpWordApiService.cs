@@ -60,13 +60,19 @@ namespace BLL.Services.HttpApi
 
         private List<string> GetWordExamples(ICollection<WordMeaning> wordMeanings)
         {
-            return wordMeanings
-                .FirstOrDefault(m => m.PartOfSpeech.Contains("verb") || m.PartOfSpeech.Contains("adjective"))
-                    .Definitions
-                        .Where(d => !String.IsNullOrEmpty(d.Example))
-                            .Select(d => d.Example)
-                            .Take(5)
-                            .ToList();
+            var meaning = wordMeanings
+                .FirstOrDefault(m => m.PartOfSpeech.Contains("verb") || m.PartOfSpeech.Contains("adjective"));
+
+            if(meaning != null)
+            {
+               return meaning.Definitions
+                       .Where(d => !String.IsNullOrEmpty(d.Example))
+                       .Select(d => d.Example)
+                       .Take(5)
+                       .ToList();
+            }
+
+            return new List<string>();
         }
     }
 }

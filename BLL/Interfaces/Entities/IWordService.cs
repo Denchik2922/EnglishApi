@@ -6,6 +6,7 @@ namespace BLL.Interfaces.Entities
 {
     public interface IWordService : IBaseGenericService<Word>
     {
-        Task<PagedList<Word>> GetWordsForDictionaryAsync(int dictionaryId, PaginationParameters parameters);
+        Task AddAsync(Word entity, string userId);
+        Task<PagedList<Word>> GetWordsForDictionaryAsync(int dictionaryId, string userId, PaginationParameters parameters);
     }
 }

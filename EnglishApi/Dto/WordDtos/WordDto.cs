@@ -13,6 +13,8 @@ namespace EnglishApi.Dto.WordDtos
         [Required]
         public string Name { get; set; }
 
+        public LearnedWordDto LearnedWord { get; set;}
+
         [Required]
         [EnsureMinimumElements(1, ErrorMessage = "At least a Translates is required")]
         public ICollection<TranslatedWordDto> Translates { get; set; }

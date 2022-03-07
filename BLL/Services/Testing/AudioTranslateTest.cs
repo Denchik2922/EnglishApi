@@ -18,15 +18,13 @@ namespace BLL.Services.Testing
 
         public override async Task<TestParameters> StartTest(int dictionaryId, int countWord = 1)
         {
-            var dictionary = await _context.EnglishDictionaries
-                                            .Include(d => d.Words)
-                                            .FirstOrDefaultAsync(d => d.Id == dictionaryId);
-            if (dictionary == null)
-            {
-                throw new ItemNotFoundException($"{typeof(EnglishDictionary).Name} with id {dictionaryId} not found");
-            }
-
-            var countQuestion = dictionary.Words.Count(w => !String.IsNullOrEmpty(w.AudioUrl));
+            var countQuestion = await _context.LearnedWords
+                                  .Include(l => l.Word)
+                                  .AsNoTracking()
+                                  .Where(l => l.Word.EnglishDictionaryId == dictionaryId
+                                           && !String.IsNullOrEmpty(l.Word.AudioUrl)
+                                           && l.IsLearned == false)
+                                  .CountAsync();
 
             return new TestParameters()
             {
@@ -52,13 +50,21 @@ namespace BLL.Services.Testing
 
         private async Task<string> GetAudio(int dicId, int currQuestion, int countWord)
         {
-            var word = await _context.Words
-                                     .AsNoTracking()
-                                     .Where(w => w.EnglishDictionaryId == dicId && !String.IsNullOrEmpty(w.AudioUrl))
-                                     .Skip((currQuestion - 1) * countWord)
-                                     .Take(countWord)
-                                     .FirstOrDefaultAsync();
-            return word.AudioUrl;
+            var learnedWord = await _context.LearnedWords
+                                      .Include(l => l.Word)
+                                      .AsNoTracking()
+                                      .Where(l => l.Word.EnglishDictionaryId == dicId 
+                                                && !String.IsNullOrEmpty(l.Word.AudioUrl)
+                                                && l.IsLearned == false)
+                                      .Skip((currQuestion - 1) * countWord)
+                                      .Take(countWord)
+                                      .FirstOrDefaultAsync();
+            if(learnedWord == null)
+            {
+                throw new ItemNotFoundException($"{typeof(LearnedWord).Name} not found");
+            }
+
+            return learnedWord.Word.AudioUrl;
         }
 
         public override async Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters)

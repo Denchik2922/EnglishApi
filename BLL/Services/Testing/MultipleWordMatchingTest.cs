@@ -17,15 +17,14 @@ namespace BLL.Services.Testing
 
         public override async Task<TestParameters> StartTest(int dictionaryId, int countWord = 1)
         {
-            var dictionary = await _context.EnglishDictionaries
-                                            .Include(d => d.Words)
-                                            .FirstOrDefaultAsync(d => d.Id == dictionaryId);
-            if (dictionary == null)
-            {
-                throw new ItemNotFoundException($"{typeof(EnglishDictionary).Name} with id {dictionaryId} not found");
-            }
+            var countUnlearnedWord = await _context.LearnedWords
+                                   .Include(l => l.Word)
+                                   .AsNoTracking()
+                                   .Where(l => l.Word.EnglishDictionaryId == dictionaryId
+                                            && l.IsLearned == false)
+                                   .CountAsync();
 
-            double count = dictionary.Words.Count / (double)countWord;
+            double count = countUnlearnedWord / (double)countWord;
             var countQuestion = (int)Math.Ceiling(count);
 
             return new TestParameters()
@@ -63,13 +62,16 @@ namespace BLL.Services.Testing
 
         private async Task<ICollection<Word>> GetWords(int dicId, int currQuestion, int countWord)
         {
-            var words = await _context.Words
-                                     .Include(w => w.Translates)
-                                     .AsNoTracking()
-                                     .Where(w => w.EnglishDictionaryId == dicId)
-                                     .Skip((currQuestion - 1) * countWord)
-                                     .Take(countWord)
-                                     .ToListAsync();
+            var words = await _context.LearnedWords
+                                .Include(l => l.Word)
+                                    .ThenInclude(w => w.Translates)
+                                .AsNoTracking()
+                                .Where(l => l.Word.EnglishDictionaryId == dicId
+                                         && l.IsLearned == false)
+                                .Skip((currQuestion - 1) * countWord)
+                                .Take(countWord)
+                                .Select(l => l.Word)
+                                .ToListAsync();
             if (words == null)
             {
                 throw new ItemNotFoundException($"{typeof(Word).Name} not found in dictionary with id {dicId}");
@@ -109,11 +111,12 @@ namespace BLL.Services.Testing
                 paramCheck.Parameters.TrueAnswers++;
             }
 
-            var dictionary = await _context.EnglishDictionaries
-                                            .Include(d => d.Words)
-                                            .FirstOrDefaultAsync(d => d.Id == paramCheck.Parameters.DictionaryId);
-
-            var countQuestion = dictionary.Words.Count;
+            var countQuestion = await _context.LearnedWords
+                                   .Include(l => l.Word)
+                                   .AsNoTracking()
+                                   .Where(l => l.Word.EnglishDictionaryId == paramCheck.Parameters.DictionaryId
+                                            && l.IsLearned == false)
+                                   .CountAsync();
 
             paramCheck.Parameters.Score = GetCalculateScore(paramCheck.Parameters.TrueAnswers, countQuestion);
         }

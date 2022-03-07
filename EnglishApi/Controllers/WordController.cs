@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EnglishApi.Controllers
@@ -50,7 +51,8 @@ namespace EnglishApi.Controllers
         [HttpGet("dictionary-words/{dictionaryId}")]
         public async Task<ActionResult<ICollection<WordDto>>> GetWordsForDictionary([FromQuery] PaginationParameters parameters, int dictionaryId)
         {
-            var words = await _wordService.GetWordsForDictionaryAsync(dictionaryId, parameters);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var words = await _wordService.GetWordsForDictionaryAsync(dictionaryId, userId, parameters); 
 
             ICollection<WordDto> wordsDto = _mapper.Map<ICollection<WordDto>>(words);
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(words.MetaData));
@@ -80,13 +82,16 @@ namespace EnglishApi.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var word = _mapper.Map<Word>(wordDto);
+
                 var dictionary = await _dictionaryService.GetByIdAsync(word.EnglishDictionaryId);
                 var authorizationResult = await _authorizationService
                     .AuthorizeAsync(User, dictionary, "EditDictionaryPolicy");
+
                 if (authorizationResult.Succeeded)
                 {
-                    await _wordService.AddAsync(word);
+                    await _wordService.AddAsync(word, userId);
                     return Ok();
                 }
                 else

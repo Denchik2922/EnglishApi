@@ -163,6 +163,7 @@ namespace EnglishApi
             services.AddScoped<IJwtTokenService, JwtTokenService>();
             services.AddScoped<IUploadImagesService, UploadImagesService>();
             services.AddScoped<ITypeOfTestingService, TypeOfTestingService>();
+            services.AddScoped<ILearnedWordService, LearnedWordService>();
 
             //Http Services
             services.AddScoped<IHttpPhotoApiService, HttpPhotoApiService>();

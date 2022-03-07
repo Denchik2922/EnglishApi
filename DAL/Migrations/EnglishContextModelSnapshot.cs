@@ -137,22 +137,22 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "afc4a156-7f70-409f-bb0e-670e7e7d6bbd",
-                            ConcurrencyStamp = "8b410704-515c-436b-b323-4775ee047de1",
+                            Id = "446f5d9d-db7e-47d1-863c-bc246cc7a37f",
+                            ConcurrencyStamp = "dbb5a6c2-1a72-4ceb-84c4-0fad93115ae9",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "633997a3-7d92-4e27-bac9-3aba99a44bec",
-                            ConcurrencyStamp = "9a96ee3b-6fc5-4f21-a7ab-b5d45750d523",
+                            Id = "eaa3277e-4c90-4b9f-bff3-c5421cddb079",
+                            ConcurrencyStamp = "0ead144c-bf01-4693-ae5a-f84cf1b4aef9",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "b92a71f3-4ddf-42b2-a395-833f0fa9e351",
-                            ConcurrencyStamp = "f58821d2-e1f5-4a82-afe3-c0266884a7a1",
+                            Id = "39af2419-b9d8-4cf5-866f-299323e18d70",
+                            ConcurrencyStamp = "02fbd1d9-1b90-49a2-9410-0d5e711d768b",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
@@ -216,6 +216,29 @@ namespace DAL.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("EnglishDictionaryTag");
+                });
+
+            modelBuilder.Entity("Models.Entities.LearnedWord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsLearned")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WordId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WordId");
+
+                    b.ToTable("LearnedWords");
                 });
 
             modelBuilder.Entity("Models.Entities.Tag", b =>
@@ -532,6 +555,17 @@ namespace DAL.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("Models.Entities.LearnedWord", b =>
+                {
+                    b.HasOne("Models.Entities.Word", "Word")
+                        .WithMany("LearnedWords")
+                        .HasForeignKey("WordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Word");
+                });
+
             modelBuilder.Entity("Models.Entities.TestResult", b =>
                 {
                     b.HasOne("Models.Entities.EnglishDictionary", "EnglishDictionary")
@@ -625,6 +659,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Models.Entities.Word", b =>
                 {
+                    b.Navigation("LearnedWords");
+
                     b.Navigation("Translates");
 
                     b.Navigation("WordExamples");

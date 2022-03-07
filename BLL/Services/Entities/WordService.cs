@@ -27,9 +27,9 @@ namespace BLL.Services.Entities
                             .ToPagedList(words, parameters.PageNumber, parameters.PageSize);
         }
 
-        public async Task<PagedList<Word>> GetWordsForDictionaryAsync(int dictionaryId, PaginationParameters parameters)
+        public async Task<PagedList<Word>> GetWordsForDictionaryAsync(int dictionaryId, string userId, PaginationParameters parameters)
         {
-            var words = GetWordsQueryable()
+            var words = GetWordsQueryable(userId)
                             .Where(w => w.EnglishDictionaryId == dictionaryId)
                             .SearchAndSort(parameters);
 
@@ -59,13 +59,31 @@ namespace BLL.Services.Entities
                               .AsSplitQuery();
         }
 
-        public override async Task AddAsync(Word entity)
+        private IQueryable<Word> GetWordsQueryable(string userId)
+        {
+            return _context.Words
+                              .Include(w => w.Dictionary)
+                              .Include(w => w.WordExamples)
+                              .Include(w => w.Translates)
+                              .Include(w => w.LearnedWords
+                                             .Where(l => l.UserId == userId))
+                              .AsSplitQuery();
+        }
+
+        public async Task AddAsync(Word entity, string userId)
         {
             bool IsExisted = await СheckWordForExistence(entity);
             if (IsExisted)
             {
                 throw new WordExistsExeption($"{typeof(Word).Name} with name {entity.Name} has already existed in this dictionary");
             }
+
+            entity.LearnedWords.Add(
+                new LearnedWord()
+                {
+                    UserId = userId,
+                    IsLearned = false
+                });
 
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();

@@ -7,6 +7,7 @@ namespace Models.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public ICollection<LearnedWord> LearnedWords { get; set; } = new List<LearnedWord>();
         public ICollection<TranslatedWord> Translates { get; set; } = new List<TranslatedWord>();
         public ICollection<WordExample> WordExamples { get; set; } = new List<WordExample>();
         public int EnglishDictionaryId { get; set; }

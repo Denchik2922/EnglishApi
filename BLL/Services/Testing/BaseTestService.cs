@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Models.Entities;
 using Models.Tests;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BLL.Services.Testing
@@ -18,19 +19,18 @@ namespace BLL.Services.Testing
 
         public virtual async Task<TestParameters> StartTest(int dictionaryId, int countWord = 1)
         {
-            var dictionary = await _context.EnglishDictionaries
-                                            .Include(d => d.Words)
-                                            .FirstOrDefaultAsync(d => d.Id == dictionaryId);
-            if (dictionary == null)
-            {
-                throw new ItemNotFoundException($"{typeof(EnglishDictionary).Name} with id {dictionaryId} not found");
-            }
+            var countQuestion = await _context.LearnedWords
+                                   .Include(l => l.Word)
+                                   .AsNoTracking()
+                                   .Where(l => l.Word.EnglishDictionaryId == dictionaryId 
+                                            && l.IsLearned == false)
+                                   .CountAsync();
 
             return new TestParameters()
             {
                 Score = 0,
                 TrueAnswers = 0,
-                CountQuestion = dictionary.Words.Count ,
+                CountQuestion = countQuestion,
                 DictionaryId = dictionaryId,
                 CurrentQuestion = 1,
                 CountWord = countWord

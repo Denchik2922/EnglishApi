@@ -28,14 +28,15 @@ namespace BLL.Services.Testing
 
         private async Task<string> GetTranslate(int dicId, int currQuestion, int countWord)
         {
-            var wordTranslates = await _context.Words
-                                     .Include(w => w.Translates)
-                                     .AsNoTracking()
-                                     .Where(w => w.EnglishDictionaryId == dicId)
-                                     .Skip((currQuestion - 1) * countWord)
-                                     .Take(countWord)
-                                     .Select(w => String.Join(", ", w.Translates.Select(t => t.Name)))
-                                     .FirstOrDefaultAsync();
+            var wordTranslates = await _context.LearnedWords
+                                         .Include(l => l.Word)
+                                         .AsNoTracking()
+                                         .Where(l => l.Word.EnglishDictionaryId == dicId
+                                                  && l.IsLearned == false)
+                                         .Skip((currQuestion - 1) * countWord)
+                                         .Take(countWord)
+                                         .Select(l => String.Join(", ", l.Word.Translates.Select(t => t.Name)))
+                                         .FirstOrDefaultAsync();
             return wordTranslates;
         }
 

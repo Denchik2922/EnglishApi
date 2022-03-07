@@ -32,30 +32,38 @@ namespace BLL.Services.Testing
 
         private async Task<Word> GetWord(int dicId, int currQuestion, int countWord)
         {
-            var word = await _context.Words
-                                     .Include(w => w.Translates)
-                                     .AsNoTracking()
-                                     .Where(w => w.EnglishDictionaryId == dicId)
-                                     .Skip((currQuestion - 1) * countWord)
-                                     .Take(countWord)
-                                     .FirstOrDefaultAsync();
-            if (word == null)
+            var learnedWord = await _context.LearnedWords
+                                            .Include(l => l.Word)
+                                                .ThenInclude(w => w.Translates)
+                                            .AsNoTracking()
+                                            .Where(l => l.Word.EnglishDictionaryId == dicId
+                                                     && l.IsLearned == false)
+                                            .Skip((currQuestion - 1) * countWord)
+                                            .Take(countWord)
+                                            .FirstOrDefaultAsync();
+
+
+            
+            if (learnedWord == null)
             {
-                throw new ItemNotFoundException($"{typeof(Word).Name} not found in dictionary with id {dicId}");
+                throw new ItemNotFoundException($"{typeof(LearnedWord).Name} not found in dictionary with id {dicId}");
             }
-            return word;
+            return learnedWord.Word;
         }
 
         private async Task<ICollection<string>> GetTranslates(int wordId,
                                                               int dictionaryId,
                                                               ICollection<TranslatedWord> wordTranslates)
         {
-            var translates = await _context.Words.AsNoTracking()
-                                                .Where(w => w.Id != wordId &&
-                                                            w.EnglishDictionaryId == dictionaryId)
-                                                .OrderBy(r => Guid.NewGuid())
+            var translates = await _context.LearnedWords
+                                            .Include(l => l.Word)
+                                            .AsNoTracking()
+                                            .Where(l => l.Word.EnglishDictionaryId == dictionaryId
+                                                     && l.IsLearned == false
+                                                     && l.Word.Id != wordId)
+                                            .OrderBy(r => Guid.NewGuid())
                                                 .Take(3)
-                                                .Select(w => String.Join(", ", w.Translates.Select(t => t.Name)))
+                                                .Select(l => String.Join(", ", l.Word.Translates.Select(t => t.Name)))
                                                 .ToListAsync();
 
             if (translates == null)

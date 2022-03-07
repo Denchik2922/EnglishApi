@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DAL.Migrations
 {
     [DbContext(typeof(EnglishContext))]
-    [Migration("20220218134027_AddedWordExample")]
-    partial class AddedWordExample
+    [Migration("20220302084612_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -139,22 +139,22 @@ namespace DAL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "eb84d539-b80f-41f4-8337-1f02590a7623",
-                            ConcurrencyStamp = "d4857212-bbc5-4e53-b12b-938148385442",
+                            Id = "446f5d9d-db7e-47d1-863c-bc246cc7a37f",
+                            ConcurrencyStamp = "dbb5a6c2-1a72-4ceb-84c4-0fad93115ae9",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "9d638384-df08-4b67-86b5-e4e5d23e91e5",
-                            ConcurrencyStamp = "d2fb5cfe-3103-41c6-87a4-6968a87206a8",
+                            Id = "eaa3277e-4c90-4b9f-bff3-c5421cddb079",
+                            ConcurrencyStamp = "0ead144c-bf01-4693-ae5a-f84cf1b4aef9",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "94ba2739-fea3-4c54-bb8e-1d71bafb06c6",
-                            ConcurrencyStamp = "53529802-cd5e-4e66-998f-63ab607efb97",
+                            Id = "39af2419-b9d8-4cf5-866f-299323e18d70",
+                            ConcurrencyStamp = "02fbd1d9-1b90-49a2-9410-0d5e711d768b",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
@@ -218,6 +218,29 @@ namespace DAL.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("EnglishDictionaryTag");
+                });
+
+            modelBuilder.Entity("Models.Entities.LearnedWord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsLearned")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("WordId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WordId");
+
+                    b.ToTable("LearnedWords");
                 });
 
             modelBuilder.Entity("Models.Entities.Tag", b =>
@@ -509,7 +532,8 @@ namespace DAL.Migrations
                 {
                     b.HasOne("Models.Entities.User", "Creator")
                         .WithMany("EnglishDictionaries")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Creator");
                 });
@@ -531,6 +555,17 @@ namespace DAL.Migrations
                     b.Navigation("EnglishDictionary");
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("Models.Entities.LearnedWord", b =>
+                {
+                    b.HasOne("Models.Entities.Word", "Word")
+                        .WithMany("LearnedWords")
+                        .HasForeignKey("WordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Word");
                 });
 
             modelBuilder.Entity("Models.Entities.TestResult", b =>
@@ -626,6 +661,8 @@ namespace DAL.Migrations
 
             modelBuilder.Entity("Models.Entities.Word", b =>
                 {
+                    b.Navigation("LearnedWords");
+
                     b.Navigation("Translates");
 
                     b.Navigation("WordExamples");

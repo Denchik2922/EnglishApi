@@ -20,6 +20,7 @@ namespace DAL
         public DbSet<Word> Words { get; set; }
         public DbSet<TestResult> TestResults { get; set; }
         public DbSet<TypeOfTesting> TypeOfTestings { get; set; }
+        public DbSet<LearnedWord> LearnedWords { get; set;}
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

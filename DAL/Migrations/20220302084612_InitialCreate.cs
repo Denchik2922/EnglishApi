@@ -200,7 +200,7 @@ namespace DAL.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -286,6 +286,27 @@ namespace DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LearnedWords",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IsLearned = table.Column<bool>(type: "bit", nullable: false),
+                    WordId = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LearnedWords", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LearnedWords_Words_WordId",
+                        column: x => x.WordId,
+                        principalTable: "Words",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TranslatedWords",
                 columns: table => new
                 {
@@ -305,14 +326,34 @@ namespace DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "WordExamples",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    WordId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WordExamples", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_WordExamples_Words_WordId",
+                        column: x => x.WordId,
+                        principalTable: "Words",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "9a8f0f1c-ed90-4482-93ae-9aae7037faf2", "85ab00f0-2fb2-452c-a6d7-3688d3c96813", "User", "USER" },
-                    { "4c57a021-3dd8-4923-8042-9c68c6c38758", "9e89c149-11be-4d6c-bcef-c28f629f3169", "Admin", "ADMIN" },
-                    { "3cb8605a-8c2b-4aeb-b20b-53f2cf4d4c58", "92d32ca6-faf7-40de-a701-3843a1513168", "SuperAdmin", "SUPERADMIN" }
+                    { "446f5d9d-db7e-47d1-863c-bc246cc7a37f", "dbb5a6c2-1a72-4ceb-84c4-0fad93115ae9", "User", "USER" },
+                    { "eaa3277e-4c90-4b9f-bff3-c5421cddb079", "0ead144c-bf01-4693-ae5a-f84cf1b4aef9", "Admin", "ADMIN" },
+                    { "39af2419-b9d8-4cf5-866f-299323e18d70", "02fbd1d9-1b90-49a2-9410-0d5e711d768b", "SuperAdmin", "SUPERADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -374,6 +415,11 @@ namespace DAL.Migrations
                 column: "TagId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_LearnedWords_WordId",
+                table: "LearnedWords",
+                column: "WordId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TestResults_EnglishDictionaryId",
                 table: "TestResults",
                 column: "EnglishDictionaryId");
@@ -391,6 +437,11 @@ namespace DAL.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_TranslatedWords_WordId",
                 table: "TranslatedWords",
+                column: "WordId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WordExamples_WordId",
+                table: "WordExamples",
                 column: "WordId");
 
             migrationBuilder.CreateIndex(
@@ -420,10 +471,16 @@ namespace DAL.Migrations
                 name: "EnglishDictionaryTag");
 
             migrationBuilder.DropTable(
+                name: "LearnedWords");
+
+            migrationBuilder.DropTable(
                 name: "TestResults");
 
             migrationBuilder.DropTable(
                 name: "TranslatedWords");
+
+            migrationBuilder.DropTable(
+                name: "WordExamples");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
