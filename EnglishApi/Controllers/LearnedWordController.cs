@@ -4,6 +4,7 @@ using EnglishApi.Dto.WordDtos;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EnglishApi.Controllers
@@ -24,6 +25,17 @@ namespace EnglishApi.Controllers
         public async Task<ActionResult<ICollection<LearnedWordDto>>> LearnedWord(int dictionaryId)
         {
             var learnedWords = await _learnedWordService.GetLearnedWordsForDictionary(dictionaryId);
+            var learnedWordsDto = _mapper.Map<ICollection<LearnedWordDto>>(learnedWords);
+
+            return Ok(learnedWordsDto);
+        }
+
+        [HttpGet("all/{dictionaryId}")]
+        public async Task<ActionResult<ICollection<LearnedWordDto>>> LearnedWordForUser(int dictionaryId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var learnedWords = await _learnedWordService.GetLearnedWordsForDictionary(dictionaryId, userId);
             var learnedWordsDto = _mapper.Map<ICollection<LearnedWordDto>>(learnedWords);
 
             return Ok(learnedWordsDto);

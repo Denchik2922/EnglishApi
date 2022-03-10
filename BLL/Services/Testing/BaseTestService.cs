@@ -1,7 +1,6 @@
-﻿using BLL.Exceptions;
+﻿using BLL.Interfaces.Entities;
 using DAL;
 using Microsoft.EntityFrameworkCore;
-using Models.Entities;
 using Models.Tests;
 using System;
 using System.Linq;
@@ -12,8 +11,10 @@ namespace BLL.Services.Testing
     public abstract class BaseTestService<T>
     {
         protected readonly EnglishContext _context;
-        public BaseTestService(EnglishContext context)
+        private readonly ILearnedWordService _learnedWordService;
+        public BaseTestService(EnglishContext context, ILearnedWordService learnedWordService)
         {
+            _learnedWordService = learnedWordService;
             _context = context;
         }
 
@@ -37,6 +38,16 @@ namespace BLL.Services.Testing
             };
         }
 
+        protected async Task UpdateCountTrueAnswersInWords(string userId, int wordId)
+        {
+            var learnedWord = await _learnedWordService.GetLearnedWordAsync(wordId, userId);
+            if (learnedWord.CountTrueAnswers < 10)
+            {
+                learnedWord.CountTrueAnswers++;
+                await _learnedWordService.UpdateAsync(learnedWord);
+            }
+        }
+
         protected double GetCalculateScore(int CountTrueAnswers, int CountQustion)
         {
             double score = ((double)CountTrueAnswers / CountQustion) * 100;
@@ -44,6 +55,6 @@ namespace BLL.Services.Testing
         }
 
         public abstract Task<T> GetPartOfTest(TestParameters param);
-        public abstract Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters);
+        public abstract Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters, string userId);
     }
 }

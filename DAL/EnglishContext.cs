@@ -35,6 +35,7 @@ namespace DAL
             modelBuilder.ApplyConfiguration(new TranslatedWordConfig());
             modelBuilder.ApplyConfiguration(new WordConfig());
             modelBuilder.ApplyConfiguration(new UserConfig());
+            modelBuilder.ApplyConfiguration(new LearnedConfig());
         }
 
     }

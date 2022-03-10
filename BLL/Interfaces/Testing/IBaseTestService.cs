@@ -7,6 +7,6 @@ namespace BLL.Interfaces.Testing
     {
         Task<TestParameters> StartTest(int dictionaryId, int countWord = 1);
         Task<T> GetPartOfTest(TestParameters testParameters);
-        Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters);
+        Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters, string userId);
     }
 }

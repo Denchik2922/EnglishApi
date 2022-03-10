@@ -1,4 +1,5 @@
 ﻿using BLL.Exceptions;
+using BLL.Interfaces.Entities;
 using BLL.Interfaces.Testing;
 using DAL;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +15,7 @@ namespace BLL.Services.Testing
 {
     public class AudioTranslateTest: BaseTestService<AudioQuestion>, IAudioTranslateTest
     {
-        public AudioTranslateTest(EnglishContext context) : base(context) { }
+        public AudioTranslateTest(EnglishContext context, ILearnedWordService learnedWordService) : base(context, learnedWordService) { }
 
         public override async Task<TestParameters> StartTest(int dictionaryId, int countWord = 1)
         {
@@ -67,7 +68,7 @@ namespace BLL.Services.Testing
             return learnedWord.Word.AudioUrl;
         }
 
-        public override async Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters)
+        public override async Task<ParamsForCheck> GetCheckParams(ParamsForAnswer answerParameters, string userId)
         {
             var word = await _context.Words
                                     .Include(w => w.Translates)
@@ -86,6 +87,11 @@ namespace BLL.Services.Testing
             paramCheck.Parameters = answerParameters.Parameters;
 
             CheckQuestion(paramCheck, currentTranslates, userAnswer);
+
+            if (paramCheck.IsTrueAnswer)
+            {
+                await UpdateCountTrueAnswersInWords(userId, word.Id);
+            }
 
             return paramCheck;
         }

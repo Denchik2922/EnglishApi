@@ -5,6 +5,7 @@ using EnglishApi.Dto.TestResultDtos;
 using Microsoft.AspNetCore.Mvc;
 using Models.Entities;
 using Models.Tests;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EnglishApi.Controllers
@@ -43,7 +44,9 @@ namespace EnglishApi.Controllers
         [Route("check-answer")]
         public async Task<IActionResult> CheckAnswer(ParamsForAnswer testParameters)
         {
-            var test = await _testingService.GetCheckParams(testParameters);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var test = await _testingService.GetCheckParams(testParameters, userId);
+
             return Ok(test);
         }
 

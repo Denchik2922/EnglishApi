@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+﻿using BLL.Exceptions;
 using BLL.Interfaces.Entities;
 using DAL;
 using Microsoft.EntityFrameworkCore;
@@ -11,12 +11,22 @@ namespace BLL.Services.Entities
 {
     public class LearnedWordService : ILearnedWordService
     {
-        private readonly IMapper _mapper;
         private readonly EnglishContext _context;
-        public LearnedWordService(EnglishContext context, IMapper mapper)
+        public LearnedWordService(EnglishContext context)
         {
             _context = context;
-            _mapper = mapper;
+        }
+
+        public async Task<LearnedWord> GetLearnedWordAsync(int wordId, string userId)
+        {
+           var learnedWord = await _context.LearnedWords.FirstOrDefaultAsync(l => l.WordId == wordId && l.UserId == userId);
+
+           if (learnedWord == null)
+           {
+                throw new ItemNotFoundException($"{typeof(LearnedWord).Name} with UserId {userId} and wordId {wordId} not found");
+           }
+
+           return learnedWord;
         }
 
         public async Task<ICollection<LearnedWord>> GetLearnedWordsForDictionary(int dictionaryId)
@@ -25,6 +35,15 @@ namespace BLL.Services.Entities
                            .Include(l => l.Word)
                            .AsNoTracking()
                            .Where(l => l.Word.EnglishDictionaryId == dictionaryId)
+                           .ToListAsync();
+        }
+
+        public async Task<ICollection<LearnedWord>> GetLearnedWordsForDictionary(int dictionaryId, string userId)
+        {
+            return await _context.LearnedWords
+                           .Include(l => l.Word)
+                           .AsNoTracking()
+                           .Where(l => l.Word.EnglishDictionaryId == dictionaryId && l.UserId == userId)
                            .ToListAsync();
         }
 
